@@ -22,6 +22,8 @@ export interface Inputs {
   sepTags: string;
   sepLabels: string;
   githubToken: string;
+  flavor: string;
+  mainFlavor: boolean;
 }
 
 export function tmpDir(): string {
@@ -47,7 +49,9 @@ export function getInputs(): Inputs {
     labelCustom: getInputList('label-custom', true),
     sepTags: core.getInput('sep-tags') || `\n`,
     sepLabels: core.getInput('sep-labels') || `\n`,
-    githubToken: core.getInput('github-token')
+    githubToken: core.getInput('github-token'),
+    flavor: core.getInput('flavor'),
+    mainFlavor: /true/i.test(core.getInput('main-flavor') || 'true')
   };
 }
 
