@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.13.0 (2021/03/31)
+
+* Add flavor support
+* Fork to @MarcelCoding 
+
 ## 1.12.0 (2021/03/19)
 
 * Ignore commas for `label-custom` input (#48)
