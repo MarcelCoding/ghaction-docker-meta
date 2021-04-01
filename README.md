@@ -13,23 +13,6 @@ If you are interested, [check out](https://git.io/Je09Y) my other :octocat: GitH
 
 ___
 
-* [Usage](#usage)
-  * [Basic](#basic)
-  * [Semver](#semver)
-  * [Bake definition](#bake-definition)
-* [Customizing](#customizing)
-  * [inputs](#inputs)
-  * [outputs](#outputs)
-* [Notes](#notes)
-  * [Latest tag](#latest-tag)
-  * [Handle semver tag](#handle-semver-tag)
-  * [`tag-match` examples](#tag-match-examples)
-  * [Schedule tag](#schedule-tag)
-  * [Overwrite labels](#overwrite-labels)
-* [Keep up-to-date with GitHub Dependabot](#keep-up-to-date-with-github-dependabot)
-* [Contributing](#contributing)
-* [License](#license)
-
 ## Usage
 
 ### Basic
