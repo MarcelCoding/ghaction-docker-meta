@@ -1,5 +1,4 @@
 [![GitHub release](https://img.shields.io/github/release/marcelcoding/ghaction-docker-meta.svg?style=flat-square)](https://github.com/marcelcoding/ghaction-docker-meta/releases/latest)
-[![GitHub marketplace](https://img.shields.io/badge/marketplace-docker--meta-blue?logo=github&style=flat-square)](https://github.com/marketplace/actions/docker-meta)
 [![Test workflow](https://img.shields.io/github/workflow/status/marcelcoding/ghaction-docker-meta/test?label=test&logo=github&style=flat-square)](https://github.com/marcelcoding/ghaction-docker-meta/actions?workflow=test)
 
 ## About
@@ -7,10 +6,10 @@
 GitHub Action to extract metadata (tags, labels) for Docker. This action is particularly useful if used with
 [Docker Build Push](https://github.com/docker/build-push-action) action.
 
-If you are interested, [check out](https://git.io/Je09Y) my other :octocat: GitHub Actions!
+This action was originally created by [@crazy-max](https://github.com/crazy-max/ghaction-docker-meta/). He created a v2 with many changes that I don't like.
+Therefore I forked the v1 and maintain it now.
 
 ![Screenshot](.github/ghaction-docker-meta.png)
-
 ___
 
 ## Usage
@@ -46,7 +45,7 @@ jobs:
       -
         name: Docker meta
         id: docker_meta
-        uses: marcelcoding/ghaction-docker-meta@v1
+        uses: MarcelCoding/ghaction-docker-meta@v1
         with:
           images: name/app
       -
@@ -105,7 +104,7 @@ jobs:
       -
         name: Docker meta
         id: docker_meta
-        uses: marcelcoding/ghaction-docker-meta@v1
+        uses: MarcelCoding/ghaction-docker-meta@v1
         with:
           images: name/app
           tag-semver: |
@@ -176,7 +175,7 @@ jobs:
       -
         name: Docker meta
         id: docker_meta
-        uses: marcelcoding/ghaction-docker-meta@v1
+        uses: MarcelCoding/ghaction-docker-meta@v1
         with:
           images: name/app
           tag-sha: true
@@ -356,7 +355,7 @@ labels generated are not suitable, you can overwrite them like this:
       -
         name: Docker meta
         id: docker_meta
-        uses: marcelcoding/ghaction-docker-meta@v1
+        uses: MarcelCoding/ghaction-docker-meta@v1
         with:
           images: name/app
           label-custom: |
