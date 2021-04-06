@@ -1,16 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
-import * as moment from 'moment';
 import {getInputs, Inputs} from '../src/context';
 import * as github from '../src/github';
 import {Meta, Version} from '../src/meta';
 import {Context} from '@actions/github/lib/context';
-import {ReposGetResponseData} from '@octokit/types';
 
 jest.spyOn(github, 'repo').mockImplementation(
-  (): Promise<ReposGetResponseData> => {
-    return <Promise<ReposGetResponseData>>require(path.join(__dirname, 'fixtures', 'repo.json'));
+  (): Promise<github.ReposGetResponseData> => {
+    return <Promise<github.ReposGetResponseData>>require(path.join(__dirname, 'fixtures', 'repo.json'));
   }
 );
 

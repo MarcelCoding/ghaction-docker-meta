@@ -1,6 +1,8 @@
 import * as github from '@actions/github';
 import {Context} from '@actions/github/lib/context';
-import {ReposGetResponseData} from '@octokit/types';
+import {Endpoints} from '@octokit/types';
+
+export type ReposGetResponseData = Endpoints['GET /repos/{owner}/{repo}']['response']['data'];
 
 export function context(): Context {
   return github.context;

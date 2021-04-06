@@ -6,7 +6,7 @@ import * as semver from 'semver';
 import {Inputs, tmpDir} from './context';
 import * as core from '@actions/core';
 import {Context} from '@actions/github/lib/context';
-import {ReposGetResponseData} from '@octokit/types';
+import * as github from './github';
 
 export interface Version {
   main: string | undefined;
@@ -19,10 +19,10 @@ export class Meta {
 
   private readonly inputs: Inputs;
   private readonly context: Context;
-  private readonly repo: ReposGetResponseData;
+  private readonly repo: github.ReposGetResponseData;
   private readonly date: Date;
 
-  constructor(inputs: Inputs, context: Context, repo: ReposGetResponseData) {
+  constructor(inputs: Inputs, context: Context, repo: github.ReposGetResponseData) {
     this.inputs = inputs;
     if (!this.inputs.tagEdgeBranch) {
       this.inputs.tagEdgeBranch = repo.default_branch;
