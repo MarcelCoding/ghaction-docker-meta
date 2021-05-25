@@ -33,7 +33,7 @@ beforeEach(() => {
 const tagsLabelsTest = async (envFile: string, inputs: Inputs, exVersion: Version, exTags: Array<string>, exLabels: Array<string>) => {
   process.env = dotenv.parse(fs.readFileSync(path.join(__dirname, 'fixtures', envFile)));
   const context = github.context();
-  console.log(process.env, context);
+  // console.log(process.env, context); - https://github.com/MarcelCoding/ghaction-docker-meta/security/code-scanning/8
 
   const repo = await github.repo(process.env.GITHUB_TOKEN || '');
   const meta = new Meta({...getInputs(), ...inputs}, context, repo);
