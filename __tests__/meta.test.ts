@@ -55,9 +55,9 @@ describe('null', () => {
   // prettier-ignore
   test.each([
     [
-      'event_null.env',
+      "event_null.env",
       {
-        images: ['user/app'],
+        images: ["user/app"]
       } as Inputs,
       {
         main: undefined,
@@ -77,9 +77,9 @@ describe('null', () => {
       ]
     ],
     [
-      'event_empty.env',
+      "event_empty.env",
       {
-        images: ['user/app'],
+        images: ["user/app"]
       } as Inputs,
       {
         main: undefined,
@@ -97,25 +97,25 @@ describe('null', () => {
         "org.opencontainers.image.revision=",
         "org.opencontainers.image.licenses=MIT"
       ]
-    ],
-  ])('given %p event ', tagsLabelsTest);
+    ]
+  ])("given %p event ", tagsLabelsTest);
 });
 
 describe('push', () => {
   // prettier-ignore
   test.each([
     [
-      'event_push.env',
+      "event_push.env",
       {
-        images: ['user/app'],
+        images: ["user/app"]
       } as Inputs,
       {
-        main: 'dev',
+        main: "dev",
         partial: [],
         latest: false
       } as Version,
       [
-        'user/app:dev'
+        "user/app:dev"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -129,18 +129,18 @@ describe('push', () => {
       ]
     ],
     [
-      'event_push_defbranch.env',
+      "event_push_defbranch.env",
       {
-        images: ['user/app'],
-        tagEdge: true,
+        images: ["user/app"],
+        tagEdge: true
       } as Inputs,
       {
-        main: 'edge',
+        main: "edge",
         partial: [],
         latest: false
       } as Version,
       [
-        'user/app:edge'
+        "user/app:edge"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -154,17 +154,17 @@ describe('push', () => {
       ]
     ],
     [
-      'event_push_defbranch.env',
+      "event_push_defbranch.env",
       {
-        images: ['user/app'],
+        images: ["user/app"]
       } as Inputs,
       {
-        main: 'master',
+        main: "master",
         partial: [],
         latest: false
       } as Version,
       [
-        'user/app:master'
+        "user/app:master"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -178,18 +178,18 @@ describe('push', () => {
       ]
     ],
     [
-      'event_workflow_dispatch.env',
+      "event_workflow_dispatch.env",
       {
-        images: ['user/app'],
-        tagEdge: true,
+        images: ["user/app"],
+        tagEdge: true
       } as Inputs,
       {
-        main: 'edge',
+        main: "edge",
         partial: [],
         latest: false
       } as Version,
       [
-        'user/app:edge'
+        "user/app:edge"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -203,18 +203,18 @@ describe('push', () => {
       ]
     ],
     [
-      'event_push.env',
+      "event_push.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
+        images: ["org/app", "ghcr.io/user/app"]
       } as Inputs,
       {
-        main: 'dev',
+        main: "dev",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:dev',
-        'ghcr.io/user/app:dev'
+        "org/app:dev",
+        "ghcr.io/user/app:dev"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -228,19 +228,19 @@ describe('push', () => {
       ]
     ],
     [
-      'event_push_defbranch.env',
+      "event_push_defbranch.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagEdge: true,
+        images: ["org/app", "ghcr.io/user/app"],
+        tagEdge: true
       } as Inputs,
       {
-        main: 'edge',
+        main: "edge",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:edge',
-        'ghcr.io/user/app:edge'
+        "org/app:edge",
+        "ghcr.io/user/app:edge"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -254,21 +254,21 @@ describe('push', () => {
       ]
     ],
     [
-      'event_push.env',
+      "event_push.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagSha: true,
+        images: ["org/app", "ghcr.io/user/app"],
+        tagSha: true
       } as Inputs,
       {
-        main: 'dev',
+        main: "dev",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:dev',
-        'org/app:sha-90dd603',
-        'ghcr.io/user/app:dev',
-        'ghcr.io/user/app:sha-90dd603'
+        "org/app:dev",
+        "org/app:sha-90dd603",
+        "ghcr.io/user/app:dev",
+        "ghcr.io/user/app:sha-90dd603"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -282,22 +282,22 @@ describe('push', () => {
       ]
     ],
     [
-      'event_push_defbranch.env',
+      "event_push_defbranch.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
+        images: ["org/app", "ghcr.io/user/app"],
         tagSha: true,
-        tagEdge: true,
+        tagEdge: true
       } as Inputs,
       {
-        main: 'edge',
+        main: "edge",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:edge',
-        'org/app:sha-90dd603',
-        'ghcr.io/user/app:edge',
-        'ghcr.io/user/app:sha-90dd603'
+        "org/app:edge",
+        "org/app:sha-90dd603",
+        "ghcr.io/user/app:edge",
+        "ghcr.io/user/app:sha-90dd603"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -311,23 +311,23 @@ describe('push', () => {
       ]
     ],
     [
-      'event_push.env',
+      "event_push.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
+        images: ["org/app", "ghcr.io/user/app"],
         tagSha: true,
         tagEdge: true,
-        tagEdgeBranch: 'dev'
+        tagEdgeBranch: "dev"
       } as Inputs,
       {
-        main: 'edge',
+        main: "edge",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:edge',
-        'org/app:sha-90dd603',
-        'ghcr.io/user/app:edge',
-        'ghcr.io/user/app:sha-90dd603'
+        "org/app:edge",
+        "org/app:sha-90dd603",
+        "ghcr.io/user/app:edge",
+        "ghcr.io/user/app:sha-90dd603"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -341,23 +341,23 @@ describe('push', () => {
       ]
     ],
     [
-      'event_push_defbranch.env',
+      "event_push_defbranch.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
+        images: ["org/app", "ghcr.io/user/app"],
         tagSha: true,
         tagEdge: true,
-        tagEdgeBranch: 'dev'
+        tagEdgeBranch: "dev"
       } as Inputs,
       {
-        main: 'master',
+        main: "master",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:master',
-        'org/app:sha-90dd603',
-        'ghcr.io/user/app:master',
-        'ghcr.io/user/app:sha-90dd603'
+        "org/app:master",
+        "org/app:sha-90dd603",
+        "ghcr.io/user/app:master",
+        "ghcr.io/user/app:sha-90dd603"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -371,22 +371,22 @@ describe('push', () => {
       ]
     ],
     [
-      'event_push_invalidchars.env',
+      "event_push_invalidchars.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
+        images: ["org/app", "ghcr.io/user/app"],
         tagSha: true,
-        tagEdge: true,
+        tagEdge: true
       } as Inputs,
       {
-        main: 'my-feature-1245',
+        main: "my-feature-1245",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:my-feature-1245',
-        'org/app:sha-90dd603',
-        'ghcr.io/user/app:my-feature-1245',
-        'ghcr.io/user/app:sha-90dd603'
+        "org/app:my-feature-1245",
+        "org/app:sha-90dd603",
+        "ghcr.io/user/app:my-feature-1245",
+        "ghcr.io/user/app:sha-90dd603"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -398,26 +398,26 @@ describe('push', () => {
         "org.opencontainers.image.revision=90dd6032fac8bda1b6c4436a2e65de27961ed071",
         "org.opencontainers.image.licenses=MIT"
       ]
-    ],
-  ])('given %p event ', tagsLabelsTest);
+    ]
+  ])("given %p event ", tagsLabelsTest);
 });
 
 describe('push tag', () => {
   // prettier-ignore
   test.each([
     [
-      'event_tag_release1.env',
+      "event_tag_release1.env",
       {
-        images: ['user/app'],
+        images: ["user/app"]
       } as Inputs,
       {
-        main: 'release1',
+        main: "release1",
         partial: [],
         latest: true
       } as Version,
       [
-        'user/app:release1',
-        'user/app:latest'
+        "user/app:release1",
+        "user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -431,18 +431,18 @@ describe('push tag', () => {
       ]
     ],
     [
-      'event_tag_20200110-RC2.env',
+      "event_tag_20200110-RC2.env",
       {
-        images: ['user/app'],
+        images: ["user/app"]
       } as Inputs,
       {
-        main: '20200110-RC2',
+        main: "20200110-RC2",
         partial: [],
         latest: true
       } as Version,
       [
-        'user/app:20200110-RC2',
-        'user/app:latest'
+        "user/app:20200110-RC2",
+        "user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -456,19 +456,19 @@ describe('push tag', () => {
       ]
     ],
     [
-      'event_tag_20200110-RC2.env',
+      "event_tag_20200110-RC2.env",
       {
-        images: ['user/app'],
+        images: ["user/app"],
         tagMatch: `\\d{8}`,
-        tagLatest: false,
+        tagLatest: false
       } as Inputs,
       {
-        main: '20200110',
+        main: "20200110",
         partial: [],
         latest: false
       } as Version,
       [
-        'user/app:20200110'
+        "user/app:20200110"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -482,20 +482,20 @@ describe('push tag', () => {
       ]
     ],
     [
-      'event_tag_20200110-RC2.env',
+      "event_tag_20200110-RC2.env",
       {
-        images: ['user/app'],
+        images: ["user/app"],
         tagMatch: `(.*)-RC`,
         tagMatchGroup: 1,
-        tagLatest: false,
+        tagLatest: false
       } as Inputs,
       {
-        main: '20200110',
+        main: "20200110",
         partial: [],
         latest: false
       } as Version,
       [
-        'user/app:20200110'
+        "user/app:20200110"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -509,21 +509,21 @@ describe('push tag', () => {
       ]
     ],
     [
-      'event_tag_v1.1.1.env',
+      "event_tag_v1.1.1.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagMatch: `\\d{1,3}.\\d{1,3}.\\d{1,3}`,
+        images: ["org/app", "ghcr.io/user/app"],
+        tagMatch: `\\d{1,3}.\\d{1,3}.\\d{1,3}`
       } as Inputs,
       {
-        main: '1.1.1',
+        main: "1.1.1",
         partial: [],
         latest: true
       } as Version,
       [
-        'org/app:1.1.1',
-        'org/app:latest',
-        'ghcr.io/user/app:1.1.1',
-        'ghcr.io/user/app:latest'
+        "org/app:1.1.1",
+        "org/app:latest",
+        "ghcr.io/user/app:1.1.1",
+        "ghcr.io/user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -537,22 +537,22 @@ describe('push tag', () => {
       ]
     ],
     [
-      'event_tag_v1.1.1.env',
+      "event_tag_v1.1.1.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
+        images: ["org/app", "ghcr.io/user/app"],
         tagMatch: `^v(\\d{1,3}.\\d{1,3}.\\d{1,3})$`,
-        tagMatchGroup: 1,
+        tagMatchGroup: 1
       } as Inputs,
       {
-        main: '1.1.1',
+        main: "1.1.1",
         partial: [],
         latest: true
       } as Version,
       [
-        'org/app:1.1.1',
-        'org/app:latest',
-        'ghcr.io/user/app:1.1.1',
-        'ghcr.io/user/app:latest'
+        "org/app:1.1.1",
+        "org/app:latest",
+        "ghcr.io/user/app:1.1.1",
+        "ghcr.io/user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -566,21 +566,21 @@ describe('push tag', () => {
       ]
     ],
     [
-      'event_tag_v2.0.8-beta.67.env',
+      "event_tag_v2.0.8-beta.67.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagMatch: `\\d{1,3}.\\d{1,3}.\\d{1,3}-(alpha|beta).\\d{1,3}`,
+        images: ["org/app", "ghcr.io/user/app"],
+        tagMatch: `\\d{1,3}.\\d{1,3}.\\d{1,3}-(alpha|beta).\\d{1,3}`
       } as Inputs,
       {
-        main: '2.0.8-beta.67',
+        main: "2.0.8-beta.67",
         partial: [],
         latest: true
       } as Version,
       [
-        'org/app:2.0.8-beta.67',
-        'org/app:latest',
-        'ghcr.io/user/app:2.0.8-beta.67',
-        'ghcr.io/user/app:latest'
+        "org/app:2.0.8-beta.67",
+        "org/app:latest",
+        "ghcr.io/user/app:2.0.8-beta.67",
+        "ghcr.io/user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -594,21 +594,21 @@ describe('push tag', () => {
       ]
     ],
     [
-      'event_tag_v2.0.8-beta.67.env',
+      "event_tag_v2.0.8-beta.67.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagMatch: `\\d{1,3}.\\d{1,3}`,
+        images: ["org/app", "ghcr.io/user/app"],
+        tagMatch: `\\d{1,3}.\\d{1,3}`
       } as Inputs,
       {
-        main: '2.0',
+        main: "2.0",
         partial: [],
         latest: true
       } as Version,
       [
-        'org/app:2.0',
-        'org/app:latest',
-        'ghcr.io/user/app:2.0',
-        'ghcr.io/user/app:latest'
+        "org/app:2.0",
+        "org/app:latest",
+        "ghcr.io/user/app:2.0",
+        "ghcr.io/user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -622,20 +622,20 @@ describe('push tag', () => {
       ]
     ],
     [
-      'event_tag_v2.0.8-beta.67.env',
+      "event_tag_v2.0.8-beta.67.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
+        images: ["org/app", "ghcr.io/user/app"],
         tagMatch: `^v(\\d{1,3}.\\d{1,3}.\\d{1,3})$`,
-        tagMatchGroup: 1,
+        tagMatchGroup: 1
       } as Inputs,
       {
-        main: 'v2.0.8-beta.67',
+        main: "v2.0.8-beta.67",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:v2.0.8-beta.67',
-        'ghcr.io/user/app:v2.0.8-beta.67'
+        "org/app:v2.0.8-beta.67",
+        "ghcr.io/user/app:v2.0.8-beta.67"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -649,19 +649,19 @@ describe('push tag', () => {
       ]
     ],
     [
-      'event_tag_sometag.env',
+      "event_tag_sometag.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagMatch: `\\d{1,3}.\\d{1,3}`,
+        images: ["org/app", "ghcr.io/user/app"],
+        tagMatch: `\\d{1,3}.\\d{1,3}`
       } as Inputs,
       {
-        main: 'sometag',
+        main: "sometag",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:sometag',
-        'ghcr.io/user/app:sometag'
+        "org/app:sometag",
+        "ghcr.io/user/app:sometag"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -675,25 +675,25 @@ describe('push tag', () => {
       ]
     ],
     [
-      'event_tag_v1.1.1.env',
+      "event_tag_v1.1.1.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagSemver: ['{{version}}', '{{major}}.{{minor}}', '{{major}}'],
+        images: ["org/app", "ghcr.io/user/app"],
+        tagSemver: ["{{version}}", "{{major}}.{{minor}}", "{{major}}"]
       } as Inputs,
       {
-        main: '1.1.1',
-        partial: ['1.1', '1'],
+        main: "1.1.1",
+        partial: ["1.1", "1"],
         latest: true
       } as Version,
       [
-        'org/app:1.1.1',
-        'org/app:1.1',
-        'org/app:1',
-        'org/app:latest',
-        'ghcr.io/user/app:1.1.1',
-        'ghcr.io/user/app:1.1',
-        'ghcr.io/user/app:1',
-        'ghcr.io/user/app:latest'
+        "org/app:1.1.1",
+        "org/app:1.1",
+        "org/app:1",
+        "org/app:latest",
+        "ghcr.io/user/app:1.1.1",
+        "ghcr.io/user/app:1.1",
+        "ghcr.io/user/app:1",
+        "ghcr.io/user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -707,21 +707,21 @@ describe('push tag', () => {
       ]
     ],
     [
-      'event_tag_v1.1.1.env',
+      "event_tag_v1.1.1.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagSemver: ['{{version}}', '{{major}}.{{minor}}.{{patch}}'],
+        images: ["org/app", "ghcr.io/user/app"],
+        tagSemver: ["{{version}}", "{{major}}.{{minor}}.{{patch}}"]
       } as Inputs,
       {
-        main: '1.1.1',
+        main: "1.1.1",
         partial: [],
         latest: true
       } as Version,
       [
-        'org/app:1.1.1',
-        'org/app:latest',
-        'ghcr.io/user/app:1.1.1',
-        'ghcr.io/user/app:latest'
+        "org/app:1.1.1",
+        "org/app:latest",
+        "ghcr.io/user/app:1.1.1",
+        "ghcr.io/user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -735,19 +735,19 @@ describe('push tag', () => {
       ]
     ],
     [
-      'event_tag_v2.0.8-beta.67.env',
+      "event_tag_v2.0.8-beta.67.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagSemver: ['{{major}}.{{minor}}', '{{major}}'],
+        images: ["org/app", "ghcr.io/user/app"],
+        tagSemver: ["{{major}}.{{minor}}", "{{major}}"]
       } as Inputs,
       {
-        main: '2.0.8-beta.67',
+        main: "2.0.8-beta.67",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:2.0.8-beta.67',
-        'ghcr.io/user/app:2.0.8-beta.67'
+        "org/app:2.0.8-beta.67",
+        "ghcr.io/user/app:2.0.8-beta.67"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -761,19 +761,19 @@ describe('push tag', () => {
       ]
     ],
     [
-      'event_tag_sometag.env',
+      "event_tag_sometag.env",
       {
-        images: ['ghcr.io/user/app'],
-        tagSemver: ['{{version}}', '{{major}}.{{minor}}', '{{major}}'],
-        tagLatest: false,
+        images: ["ghcr.io/user/app"],
+        tagSemver: ["{{version}}", "{{major}}.{{minor}}", "{{major}}"],
+        tagLatest: false
       } as Inputs,
       {
-        main: 'sometag',
+        main: "sometag",
         partial: [],
         latest: false
       } as Version,
       [
-        'ghcr.io/user/app:sometag'
+        "ghcr.io/user/app:sometag"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -785,27 +785,27 @@ describe('push tag', () => {
         "org.opencontainers.image.revision=90dd6032fac8bda1b6c4436a2e65de27961ed071",
         "org.opencontainers.image.licenses=MIT"
       ]
-    ],
-  ])('given %p event ', tagsLabelsTest);
+    ]
+  ])("given %p event ", tagsLabelsTest);
 });
 
 describe('latest', () => {
   // prettier-ignore
   test.each([
     [
-      'event_tag_release1.env',
+      "event_tag_release1.env",
       {
-        images: ['user/app'],
-        tagMatch: `^release\\d{1,2}`,
+        images: ["user/app"],
+        tagMatch: `^release\\d{1,2}`
       } as Inputs,
       {
-        main: 'release1',
+        main: "release1",
         partial: [],
-        latest: true,
+        latest: true
       } as Version,
       [
-        'user/app:release1',
-        'user/app:latest'
+        "user/app:release1",
+        "user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -819,19 +819,19 @@ describe('latest', () => {
       ]
     ],
     [
-      'event_tag_20200110-RC2.env',
+      "event_tag_20200110-RC2.env",
       {
-        images: ['user/app'],
-        tagMatch: `^\\d+-RC\\d{1,2}`,
+        images: ["user/app"],
+        tagMatch: `^\\d+-RC\\d{1,2}`
       } as Inputs,
       {
-        main: '20200110-RC2',
+        main: "20200110-RC2",
         partial: [],
         latest: true
       } as Version,
       [
-        'user/app:20200110-RC2',
-        'user/app:latest'
+        "user/app:20200110-RC2",
+        "user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -845,19 +845,19 @@ describe('latest', () => {
       ]
     ],
     [
-      'event_tag_20200110-RC2.env',
+      "event_tag_20200110-RC2.env",
       {
-        images: ['user/app'],
-        tagMatch: `\\d{8}`,
+        images: ["user/app"],
+        tagMatch: `\\d{8}`
       } as Inputs,
       {
-        main: '20200110',
+        main: "20200110",
         partial: [],
         latest: true
       } as Version,
       [
-        'user/app:20200110',
-        'user/app:latest'
+        "user/app:20200110",
+        "user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -871,19 +871,19 @@ describe('latest', () => {
       ]
     ],
     [
-      'event_tag_v1.1.1.env',
+      "event_tag_v1.1.1.env",
       {
-        images: ['user/app'],
-        tagMatch: `\\d{1,3}.\\d{1,3}.\\d{1,3}`,
+        images: ["user/app"],
+        tagMatch: `\\d{1,3}.\\d{1,3}.\\d{1,3}`
       } as Inputs,
       {
-        main: '1.1.1',
+        main: "1.1.1",
         partial: [],
         latest: true
       } as Version,
       [
-        'user/app:1.1.1',
-        'user/app:latest'
+        "user/app:1.1.1",
+        "user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -897,20 +897,20 @@ describe('latest', () => {
       ]
     ],
     [
-      'event_tag_v1.1.1.env',
+      "event_tag_v1.1.1.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
+        images: ["org/app", "ghcr.io/user/app"]
       } as Inputs,
       {
-        main: 'v1.1.1',
+        main: "v1.1.1",
         partial: [],
         latest: true
       } as Version,
       [
-        'org/app:v1.1.1',
-        'org/app:latest',
-        'ghcr.io/user/app:v1.1.1',
-        'ghcr.io/user/app:latest',
+        "org/app:v1.1.1",
+        "org/app:latest",
+        "ghcr.io/user/app:v1.1.1",
+        "ghcr.io/user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -924,21 +924,21 @@ describe('latest', () => {
       ]
     ],
     [
-      'event_tag_v2.0.8-beta.67.env',
+      "event_tag_v2.0.8-beta.67.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagMatch: `\\d{1,3}.\\d{1,3}.\\d{1,3}`,
+        images: ["org/app", "ghcr.io/user/app"],
+        tagMatch: `\\d{1,3}.\\d{1,3}.\\d{1,3}`
       } as Inputs,
       {
-        main: '2.0.8',
+        main: "2.0.8",
         partial: [],
         latest: true
       } as Version,
       [
-        'org/app:2.0.8',
-        'org/app:latest',
-        'ghcr.io/user/app:2.0.8',
-        'ghcr.io/user/app:latest'
+        "org/app:2.0.8",
+        "org/app:latest",
+        "ghcr.io/user/app:2.0.8",
+        "ghcr.io/user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -952,19 +952,19 @@ describe('latest', () => {
       ]
     ],
     [
-      'event_tag_v1.1.1.env',
+      "event_tag_v1.1.1.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagLatest: false,
+        images: ["org/app", "ghcr.io/user/app"],
+        tagLatest: false
       } as Inputs,
       {
-        main: 'v1.1.1',
+        main: "v1.1.1",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:v1.1.1',
-        'ghcr.io/user/app:v1.1.1',
+        "org/app:v1.1.1",
+        "ghcr.io/user/app:v1.1.1"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -978,19 +978,19 @@ describe('latest', () => {
       ]
     ],
     [
-      'event_tag_v1.1.1.env',
+      "event_tag_v1.1.1.env",
       {
-        images: ['org/app', 'ghcr.io/MyUSER/MyApp'],
-        tagLatest: false,
+        images: ["org/app", "ghcr.io/MyUSER/MyApp"],
+        tagLatest: false
       } as Inputs,
       {
-        main: 'v1.1.1',
+        main: "v1.1.1",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:v1.1.1',
-        'ghcr.io/myuser/myapp:v1.1.1',
+        "org/app:v1.1.1",
+        "ghcr.io/myuser/myapp:v1.1.1"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1004,25 +1004,25 @@ describe('latest', () => {
       ]
     ],
     [
-      'event_tag_v1.1.1.env',
+      "event_tag_v1.1.1.env",
       {
-        images: ['org/app', 'ghcr.io/MyUSER/MyApp'],
+        images: ["org/app", "ghcr.io/MyUSER/MyApp"],
         tagLatest: false,
         labelCustom: [
           "maintainer=CrazyMax",
           "org.opencontainers.image.title=MyCustomTitle",
           "org.opencontainers.image.description=Another description",
-          "org.opencontainers.image.vendor=MyCompany",
-        ],
+          "org.opencontainers.image.vendor=MyCompany"
+        ]
       } as Inputs,
       {
-        main: 'v1.1.1',
+        main: "v1.1.1",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:v1.1.1',
-        'ghcr.io/myuser/myapp:v1.1.1',
+        "org/app:v1.1.1",
+        "ghcr.io/myuser/myapp:v1.1.1"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1038,25 +1038,25 @@ describe('latest', () => {
         "org.opencontainers.image.description=Another description",
         "org.opencontainers.image.vendor=MyCompany"
       ]
-    ],
-  ])('given %p event ', tagsLabelsTest);
+    ]
+  ])("given %p event ", tagsLabelsTest);
 });
 
 describe('pull_request', () => {
   // prettier-ignore
   test.each([
     [
-      'event_pull_request.env',
+      "event_pull_request.env",
       {
-        images: ['user/app'],
+        images: ["user/app"]
       } as Inputs,
       {
-        main: 'pr-2',
+        main: "pr-2",
         partial: [],
         latest: false
       } as Version,
       [
-        'user/app:pr-2'
+        "user/app:pr-2"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1070,18 +1070,18 @@ describe('pull_request', () => {
       ]
     ],
     [
-      'event_pull_request.env',
+      "event_pull_request.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
+        images: ["org/app", "ghcr.io/user/app"]
       } as Inputs,
       {
-        main: 'pr-2',
+        main: "pr-2",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:pr-2',
-        'ghcr.io/user/app:pr-2'
+        "org/app:pr-2",
+        "ghcr.io/user/app:pr-2"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1095,21 +1095,21 @@ describe('pull_request', () => {
       ]
     ],
     [
-      'event_pull_request.env',
+      "event_pull_request.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagSha: true,
+        images: ["org/app", "ghcr.io/user/app"],
+        tagSha: true
       } as Inputs,
       {
-        main: 'pr-2',
+        main: "pr-2",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:pr-2',
-        'org/app:sha-1e9249f',
-        'ghcr.io/user/app:pr-2',
-        'ghcr.io/user/app:sha-1e9249f'
+        "org/app:pr-2",
+        "org/app:sha-1e9249f",
+        "ghcr.io/user/app:pr-2",
+        "ghcr.io/user/app:sha-1e9249f"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1121,25 +1121,25 @@ describe('pull_request', () => {
         "org.opencontainers.image.revision=1e9249f05bfc090e0688b8fb9c1b347586add504",
         "org.opencontainers.image.licenses=MIT"
       ]
-    ],
-  ])('given %p event ', tagsLabelsTest);
+    ]
+  ])("given %p event ", tagsLabelsTest);
 });
 
 describe('schedule', () => {
   // prettier-ignore
   test.each([
     [
-      'event_schedule.env',
+      "event_schedule.env",
       {
-        images: ['user/app'],
+        images: ["user/app"]
       } as Inputs,
       {
-        main: 'nightly',
+        main: "nightly",
         partial: [],
         latest: false
       } as Version,
       [
-        'user/app:nightly'
+        "user/app:nightly"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1153,18 +1153,18 @@ describe('schedule', () => {
       ]
     ],
     [
-      'event_schedule.env',
+      "event_schedule.env",
       {
-        images: ['user/app'],
+        images: ["user/app"],
         tagSchedule: `{{date 'YYYYMMDD'}}`
       } as Inputs,
       {
-        main: '20200110',
+        main: "20200110",
         partial: [],
         latest: false
       } as Version,
       [
-        'user/app:20200110'
+        "user/app:20200110"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1178,18 +1178,18 @@ describe('schedule', () => {
       ]
     ],
     [
-      'event_schedule.env',
+      "event_schedule.env",
       {
-        images: ['user/app'],
+        images: ["user/app"],
         tagSchedule: `{{date 'YYYYMMDD-HHmmss'}}`
       } as Inputs,
       {
-        main: '20200110-003000',
+        main: "20200110-003000",
         partial: [],
         latest: false
       } as Version,
       [
-        'user/app:20200110-003000'
+        "user/app:20200110-003000"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1203,18 +1203,18 @@ describe('schedule', () => {
       ]
     ],
     [
-      'event_schedule.env',
+      "event_schedule.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
+        images: ["org/app", "ghcr.io/user/app"]
       } as Inputs,
       {
-        main: 'nightly',
+        main: "nightly",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:nightly',
-        'ghcr.io/user/app:nightly'
+        "org/app:nightly",
+        "ghcr.io/user/app:nightly"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1228,21 +1228,21 @@ describe('schedule', () => {
       ]
     ],
     [
-      'event_schedule.env',
+      "event_schedule.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagSha: true,
+        images: ["org/app", "ghcr.io/user/app"],
+        tagSha: true
       } as Inputs,
       {
-        main: 'nightly',
+        main: "nightly",
         partial: [],
         latest: false
       } as Version,
       [
-        'org/app:nightly',
-        'org/app:sha-90dd603',
-        'ghcr.io/user/app:nightly',
-        'ghcr.io/user/app:sha-90dd603'
+        "org/app:nightly",
+        "org/app:sha-90dd603",
+        "ghcr.io/user/app:nightly",
+        "ghcr.io/user/app:sha-90dd603"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1254,26 +1254,26 @@ describe('schedule', () => {
         "org.opencontainers.image.revision=90dd6032fac8bda1b6c4436a2e65de27961ed071",
         "org.opencontainers.image.licenses=MIT"
       ]
-    ],
-  ])('given %p event ', tagsLabelsTest);
+    ]
+  ])("given %p event ", tagsLabelsTest);
 });
 
 describe('release', () => {
   // prettier-ignore
   test.each([
     [
-      'event_release.env',
+      "event_release.env",
       {
-        images: ['user/app'],
+        images: ["user/app"]
       } as Inputs,
       {
-        main: 'v1.1.1',
+        main: "v1.1.1",
         partial: [],
         latest: true
       } as Version,
       [
-        'user/app:v1.1.1',
-        'user/app:latest',
+        "user/app:v1.1.1",
+        "user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1285,29 +1285,29 @@ describe('release', () => {
         "org.opencontainers.image.revision=90dd6032fac8bda1b6c4436a2e65de27961ed071",
         "org.opencontainers.image.licenses=MIT"
       ]
-    ],
-  ])('given %p event ', tagsLabelsTest);
+    ]
+  ])("given %p event ", tagsLabelsTest);
 });
 
 describe('custom', () => {
   // prettier-ignore
   test.each([
     [
-      'event_push.env',
+      "event_push.env",
       {
-        images: ['user/app'],
-        tagCustom: ['my', 'custom', 'tags']
+        images: ["user/app"],
+        tagCustom: ["my", "custom", "tags"]
       } as Inputs,
       {
-        main: 'dev',
-        partial: ['my', 'custom', 'tags'],
+        main: "dev",
+        partial: ["my", "custom", "tags"],
         latest: false
       } as Version,
       [
-        'user/app:dev',
-        'user/app:my',
-        'user/app:custom',
-        'user/app:tags'
+        "user/app:dev",
+        "user/app:my",
+        "user/app:custom",
+        "user/app:tags"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1321,19 +1321,19 @@ describe('custom', () => {
       ]
     ],
     [
-      'event_push.env',
+      "event_push.env",
       {
-        images: ['user/app'],
-        tagCustom: ['my']
+        images: ["user/app"],
+        tagCustom: ["my"]
       } as Inputs,
       {
-        main: 'dev',
-        partial: ['my'],
+        main: "dev",
+        partial: ["my"],
         latest: false
       } as Version,
       [
-        'user/app:dev',
-        'user/app:my'
+        "user/app:dev",
+        "user/app:my"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1347,22 +1347,22 @@ describe('custom', () => {
       ]
     ],
     [
-      'event_tag_release1.env',
+      "event_tag_release1.env",
       {
-        images: ['user/app'],
-        tagCustom: ['my', 'custom', 'tags']
+        images: ["user/app"],
+        tagCustom: ["my", "custom", "tags"]
       } as Inputs,
       {
-        main: 'release1',
-        partial: ['my', 'custom', 'tags'],
+        main: "release1",
+        partial: ["my", "custom", "tags"],
         latest: true
       } as Version,
       [
-        'user/app:release1',
-        'user/app:my',
-        'user/app:custom',
-        'user/app:tags',
-        'user/app:latest'
+        "user/app:release1",
+        "user/app:my",
+        "user/app:custom",
+        "user/app:tags",
+        "user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1376,23 +1376,23 @@ describe('custom', () => {
       ]
     ],
     [
-      'event_tag_20200110-RC2.env',
+      "event_tag_20200110-RC2.env",
       {
-        images: ['user/app'],
+        images: ["user/app"],
         tagMatch: `\\d{8}`,
         tagLatest: false,
-        tagCustom: ['my', 'custom', 'tags']
+        tagCustom: ["my", "custom", "tags"]
       } as Inputs,
       {
-        main: '20200110',
-        partial: ['my', 'custom', 'tags'],
+        main: "20200110",
+        partial: ["my", "custom", "tags"],
         latest: false
       } as Version,
       [
-        'user/app:20200110',
-        'user/app:my',
-        'user/app:custom',
-        'user/app:tags'
+        "user/app:20200110",
+        "user/app:my",
+        "user/app:custom",
+        "user/app:tags"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1406,32 +1406,32 @@ describe('custom', () => {
       ]
     ],
     [
-      'event_tag_v1.1.1.env',
+      "event_tag_v1.1.1.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagSemver: ['{{version}}', '{{major}}.{{minor}}', '{{major}}'],
-        tagCustom: ['my', 'custom', 'tags']
+        images: ["org/app", "ghcr.io/user/app"],
+        tagSemver: ["{{version}}", "{{major}}.{{minor}}", "{{major}}"],
+        tagCustom: ["my", "custom", "tags"]
       } as Inputs,
       {
-        main: '1.1.1',
-        partial: ['1.1', '1', 'my', 'custom', 'tags'],
+        main: "1.1.1",
+        partial: ["1.1", "1", "my", "custom", "tags"],
         latest: true
       } as Version,
       [
-        'org/app:1.1.1',
-        'org/app:1.1',
-        'org/app:1',
-        'org/app:my',
-        'org/app:custom',
-        'org/app:tags',
-        'org/app:latest',
-        'ghcr.io/user/app:1.1.1',
-        'ghcr.io/user/app:1.1',
-        'ghcr.io/user/app:1',
-        'ghcr.io/user/app:my',
-        'ghcr.io/user/app:custom',
-        'ghcr.io/user/app:tags',
-        'ghcr.io/user/app:latest'
+        "org/app:1.1.1",
+        "org/app:1.1",
+        "org/app:1",
+        "org/app:my",
+        "org/app:custom",
+        "org/app:tags",
+        "org/app:latest",
+        "ghcr.io/user/app:1.1.1",
+        "ghcr.io/user/app:1.1",
+        "ghcr.io/user/app:1",
+        "ghcr.io/user/app:my",
+        "ghcr.io/user/app:custom",
+        "ghcr.io/user/app:tags",
+        "ghcr.io/user/app:latest"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1445,25 +1445,25 @@ describe('custom', () => {
       ]
     ],
     [
-      'event_tag_v1.1.1.env',
+      "event_tag_v1.1.1.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagSemver: ['{{version}}', '{{major}}.{{minor}}.{{patch}}'],
-        tagCustom: ['my', 'custom', 'tags'],
-        tagCustomOnly: true,
+        images: ["org/app", "ghcr.io/user/app"],
+        tagSemver: ["{{version}}", "{{major}}.{{minor}}.{{patch}}"],
+        tagCustom: ["my", "custom", "tags"],
+        tagCustomOnly: true
       } as Inputs,
       {
-        main: 'my',
-        partial: ['custom', 'tags'],
+        main: "my",
+        partial: ["custom", "tags"],
         latest: false
       } as Version,
       [
-        'org/app:my',
-        'org/app:custom',
-        'org/app:tags',
-        'ghcr.io/user/app:my',
-        'ghcr.io/user/app:custom',
-        'ghcr.io/user/app:tags'
+        "org/app:my",
+        "org/app:custom",
+        "org/app:tags",
+        "ghcr.io/user/app:my",
+        "ghcr.io/user/app:custom",
+        "ghcr.io/user/app:tags"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1475,18 +1475,18 @@ describe('custom', () => {
         "org.opencontainers.image.revision=90dd6032fac8bda1b6c4436a2e65de27961ed071",
         "org.opencontainers.image.licenses=MIT"
       ]
-    ],
-  ])('given %p event ', tagsLabelsTest);
+    ]
+  ])("given %p event ", tagsLabelsTest);
 });
 
 describe('bake-file', () => {
   // prettier-ignore
   test.each([
     [
-      'event_push.env',
+      "event_push.env",
       {
-        images: ['user/app'],
-        tagCustom: ['my', 'custom', 'tags']
+        images: ["user/app"],
+        tagCustom: ["my", "custom", "tags"]
       } as Inputs,
       {
         "target": {
@@ -1509,24 +1509,24 @@ describe('bake-file', () => {
             },
             "args": {
               "DOCKER_META_IMAGES": "user/app",
-              "DOCKER_META_VERSION": "dev",
+              "DOCKER_META_VERSION": "dev"
             }
           }
         }
       }
     ],
     [
-      'event_push.env',
+      "event_push.env",
       {
-        images: ['user/app'],
-        tagCustom: ['my']
+        images: ["user/app"],
+        tagCustom: ["my"]
       } as Inputs,
       {
         "target": {
           "ghaction-docker-meta": {
             "tags": [
               "user/app:dev",
-              "user/app:my",
+              "user/app:my"
             ],
             "labels": {
               "org.opencontainers.image.title": "Hello-World",
@@ -1540,17 +1540,17 @@ describe('bake-file', () => {
             },
             "args": {
               "DOCKER_META_IMAGES": "user/app",
-              "DOCKER_META_VERSION": "dev",
+              "DOCKER_META_VERSION": "dev"
             }
           }
         }
       }
     ],
     [
-      'event_tag_release1.env',
+      "event_tag_release1.env",
       {
-        images: ['user/app'],
-        tagCustom: ['my', 'custom', 'tags']
+        images: ["user/app"],
+        tagCustom: ["my", "custom", "tags"]
       } as Inputs,
       {
         "target": {
@@ -1574,19 +1574,19 @@ describe('bake-file', () => {
             },
             "args": {
               "DOCKER_META_IMAGES": "user/app",
-              "DOCKER_META_VERSION": "release1",
+              "DOCKER_META_VERSION": "release1"
             }
           }
         }
       }
     ],
     [
-      'event_tag_20200110-RC2.env',
+      "event_tag_20200110-RC2.env",
       {
-        images: ['user/app'],
+        images: ["user/app"],
         tagMatch: `\\d{8}`,
         tagLatest: false,
-        tagCustom: ['my', 'custom', 'tags']
+        tagCustom: ["my", "custom", "tags"]
       } as Inputs,
       {
         "target": {
@@ -1609,18 +1609,18 @@ describe('bake-file', () => {
             },
             "args": {
               "DOCKER_META_IMAGES": "user/app",
-              "DOCKER_META_VERSION": "20200110",
+              "DOCKER_META_VERSION": "20200110"
             }
           }
         }
       }
     ],
     [
-      'event_tag_v1.1.1.env',
+      "event_tag_v1.1.1.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagSemver: ['{{version}}', '{{major}}.{{minor}}', '{{major}}'],
-        tagCustom: ['my', 'custom', 'tags']
+        images: ["org/app", "ghcr.io/user/app"],
+        tagSemver: ["{{version}}", "{{major}}.{{minor}}", "{{major}}"],
+        tagCustom: ["my", "custom", "tags"]
       } as Inputs,
       {
         "target": {
@@ -1653,19 +1653,19 @@ describe('bake-file', () => {
             },
             "args": {
               "DOCKER_META_IMAGES": "org/app,ghcr.io/user/app",
-              "DOCKER_META_VERSION": "1.1.1",
+              "DOCKER_META_VERSION": "1.1.1"
             }
           }
         }
       }
     ],
     [
-      'event_tag_v1.1.1.env',
+      "event_tag_v1.1.1.env",
       {
-        images: ['org/app', 'ghcr.io/user/app'],
-        tagSemver: ['{{version}}', '{{major}}.{{minor}}.{{patch}}'],
-        tagCustom: ['my', 'custom', 'tags'],
-        tagCustomOnly: true,
+        images: ["org/app", "ghcr.io/user/app"],
+        tagSemver: ["{{version}}", "{{major}}.{{minor}}.{{patch}}"],
+        tagCustom: ["my", "custom", "tags"],
+        tagCustomOnly: true
       } as Inputs,
       {
         "target": {
@@ -1690,22 +1690,22 @@ describe('bake-file', () => {
             },
             "args": {
               "DOCKER_META_IMAGES": "org/app,ghcr.io/user/app",
-              "DOCKER_META_VERSION": "my",
+              "DOCKER_META_VERSION": "my"
             }
           }
         }
       }
     ],
     [
-      'event_tag_v1.1.1.env',
+      "event_tag_v1.1.1.env",
       {
-        images: ['org/app'],
+        images: ["org/app"],
         labelCustom: [
           "maintainer=CrazyMax",
           "org.opencontainers.image.title=MyCustom=Title",
           "org.opencontainers.image.description=Another description",
-          "org.opencontainers.image.vendor=MyCompany",
-        ],
+          "org.opencontainers.image.vendor=MyCompany"
+        ]
       } as Inputs,
       {
         "target": {
@@ -1728,23 +1728,23 @@ describe('bake-file', () => {
             },
             "args": {
               "DOCKER_META_IMAGES": "org/app",
-              "DOCKER_META_VERSION": "v1.1.1",
+              "DOCKER_META_VERSION": "v1.1.1"
             }
           }
         }
       }
     ]
-  ])('given %p event ', async (envFile: string, inputs: Inputs, exBakeDefinition: {}) => {
-    process.env = dotenv.parse(fs.readFileSync(path.join(__dirname, 'fixtures', envFile)));
+  ])("given %p event ", async (envFile: string, inputs: Inputs, exBakeDefinition: {}) => {
+    process.env = dotenv.parse(fs.readFileSync(path.join(__dirname, "fixtures", envFile)));
     const context = github.context();
     console.log(process.env, context);
 
-    const repo = await github.repo(process.env.GITHUB_TOKEN || '');
-    const meta = new Meta({...getInputs(), ...inputs}, context, repo);
+    const repo = await github.repo(process.env.GITHUB_TOKEN || "");
+    const meta = new Meta({ ...getInputs(), ...inputs }, context, repo);
 
     const bakeFile = meta.bakeFile();
-    console.log('bakeFile', bakeFile, fs.readFileSync(bakeFile, 'utf8'));
-    expect(JSON.parse(fs.readFileSync(bakeFile, 'utf8'))).toEqual(exBakeDefinition);
+    console.log("bakeFile", bakeFile, fs.readFileSync(bakeFile, "utf8"));
+    expect(JSON.parse(fs.readFileSync(bakeFile, "utf8"))).toEqual(exBakeDefinition);
   });
 });
 
@@ -1752,22 +1752,22 @@ describe('flavor', () => {
   // prettier-ignore
   test.each([
     [
-      'event_release.env',
+      "event_release.env",
       {
-        images: ['user/app'],
-        flavor: 'debian',
-        mainFlavor: true,
+        images: ["user/app"],
+        flavor: "debian",
+        mainFlavor: true
       } as Inputs,
       {
-        main: 'v1.1.1',
+        main: "v1.1.1",
         partial: [],
         latest: true
       } as Version,
       [
-        'user/app:v1.1.1',
-        'user/app:v1.1.1-debian',
-        'user/app:latest',
-        'user/app:debian',
+        "user/app:v1.1.1",
+        "user/app:v1.1.1-debian",
+        "user/app:latest",
+        "user/app:debian"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1781,21 +1781,21 @@ describe('flavor', () => {
       ]
     ],
     [
-      'event_release.env',
+      "event_release.env",
       {
-        images: ['user/app'],
-        flavor: 'debian',
+        images: ["user/app"],
+        flavor: "debian",
         mainFlavor: true,
-        tagLatest: false,
+        tagLatest: false
       } as Inputs,
       {
-        main: 'v1.1.1',
+        main: "v1.1.1",
         partial: [],
-        latest: false,
+        latest: false
       } as Version,
       [
-        'user/app:v1.1.1',
-        'user/app:v1.1.1-debian',
+        "user/app:v1.1.1",
+        "user/app:v1.1.1-debian"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1809,20 +1809,20 @@ describe('flavor', () => {
       ]
     ],
     [
-      'event_release.env',
+      "event_release.env",
       {
-        images: ['user/app'],
-        flavor: 'alpine',
-        mainFlavor: false,
+        images: ["user/app"],
+        flavor: "alpine",
+        mainFlavor: false
       } as Inputs,
       {
-        main: 'v1.1.1',
+        main: "v1.1.1",
         partial: [],
         latest: true
       } as Version,
       [
-        'user/app:v1.1.1-alpine',
-        'user/app:alpine',
+        "user/app:v1.1.1-alpine",
+        "user/app:alpine"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1836,20 +1836,20 @@ describe('flavor', () => {
       ]
     ],
     [
-      'event_release.env',
+      "event_release.env",
       {
-        images: ['user/app'],
-        flavor: 'alpine',
+        images: ["user/app"],
+        flavor: "alpine",
         mainFlavor: false,
-        tagLatest: false,
+        tagLatest: false
       } as Inputs,
       {
-        main: 'v1.1.1',
+        main: "v1.1.1",
         partial: [],
         latest: false
       } as Version,
       [
-        'user/app:v1.1.1-alpine',
+        "user/app:v1.1.1-alpine"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1863,20 +1863,20 @@ describe('flavor', () => {
       ]
     ],
     [
-      'event_release.env',
+      "event_release.env",
       {
-        images: ['user/app'],
-        flavor: '',
+        images: ["user/app"],
+        flavor: "",
         mainFlavor: true,
-        tagLatest: false,
+        tagLatest: false
       } as Inputs,
       {
-        main: 'v1.1.1',
+        main: "v1.1.1",
         partial: [],
         latest: false
       } as Version,
       [
-        'user/app:v1.1.1',
+        "user/app:v1.1.1"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1890,20 +1890,20 @@ describe('flavor', () => {
       ]
     ],
     [
-      'event_release.env',
+      "event_release.env",
       {
-        images: ['user/app'],
-        flavor: '',
+        images: ["user/app"],
+        flavor: "",
         mainFlavor: false,
-        tagLatest: false,
+        tagLatest: false
       } as Inputs,
       {
-        main: 'v1.1.1',
+        main: "v1.1.1",
         partial: [],
         latest: false
       } as Version,
       [
-        'user/app:v1.1.1',
+        "user/app:v1.1.1"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1917,25 +1917,25 @@ describe('flavor', () => {
       ]
     ],
     [
-      'event_release.env',
+      "event_release.env",
       {
-        images: ['user/app'],
-        tagSemver: ['{{version}}', '{{major}}.{{minor}}', '{{major}}'],
+        images: ["user/app"],
+        tagSemver: ["{{version}}", "{{major}}.{{minor}}", "{{major}}"],
         tagSha: true,
-        flavor: 'alpine',
-        mainFlavor: false,
+        flavor: "alpine",
+        mainFlavor: false
       } as Inputs,
       {
-        main: '1.1.1',
-        partial: ['1.1', '1'],
+        main: "1.1.1",
+        partial: ["1.1", "1"],
         latest: true
       } as Version,
       [
-        'user/app:1.1.1-alpine',
-        'user/app:1.1-alpine',
-        'user/app:1-alpine',
-        'user/app:alpine',
-        'user/app:sha-90dd603-alpine',
+        "user/app:1.1.1-alpine",
+        "user/app:1.1-alpine",
+        "user/app:1-alpine",
+        "user/app:alpine",
+        "user/app:sha-90dd603-alpine"
       ],
       [
         "org.opencontainers.image.title=Hello-World",
@@ -1947,6 +1947,6 @@ describe('flavor', () => {
         "org.opencontainers.image.revision=90dd6032fac8bda1b6c4436a2e65de27961ed071",
         "org.opencontainers.image.licenses=MIT"
       ]
-    ],
-  ])('given %p event ', tagsLabelsTest);
+    ]
+  ])("given %p event ", tagsLabelsTest);
 });

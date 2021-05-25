@@ -3,7 +3,7 @@
   "description": "GitHub Action to extract metadata (tags, labels) for Docker",
   "main": "lib/main.js",
   "scripts": {
-    "build": "tsc && ncc build",
+    "build": "tsc && ncc build && uglifyjs dist/index.js -o dist/index.js -b",
     "test": "jest --coverage",
     "format": "prettier --write **/*.ts",
     "format-check": "prettier --check **/*.ts",
@@ -23,9 +23,9 @@
   "author": "CrazyMax",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.2.7",
+    "@actions/core": "1.3.0",
     "@actions/github": "^5.0.0",
-    "@octokit/types": "^6.13.0",
+    "@octokit/types": "6.16.0",
     "csv-parse": "^4.15.4",
     "handlebars": "^4.7.7",
     "moment": "^2.29.1",
@@ -33,14 +33,15 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.22",
-    "@types/node": "^14.14.41",
+    "@types/node": "15.6.1",
     "@vercel/ncc": "^0.28.5",
-    "dotenv": "^9.0.2",
+    "dotenv": "10.0.0",
     "jest": "^26.6.3",
     "jest-circus": "^26.6.3",
     "jest-runtime": "^26.6.3",
     "prettier": "^2.3.0",
     "ts-jest": "^26.5.5",
-    "typescript": "^4.2.4"
+    "typescript": "^4.2.4",
+    "uglify-js": "^3.13.7"
   }
 }

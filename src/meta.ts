@@ -33,82 +33,6 @@ export class Meta {
     this.version = this.getVersion();
   }
 
-  private getVersion(): Version {
-    const currentDate = this.date;
-    let version: Version = {
-      main: undefined,
-      partial: [],
-      latest: false
-    };
-
-    if (/schedule/.test(this.context.eventName)) {
-      version.main = handlebars.compile(this.inputs.tagSchedule)({
-        date: function (format) {
-          return moment(currentDate).utc().format(format);
-        }
-      });
-    } else if (/^refs\/tags\//.test(this.context.ref)) {
-      version.main = this.context.ref.replace(/^refs\/tags\//g, '').replace(/\//g, '-');
-      if (this.inputs.tagSemver.length > 0 && !semver.valid(version.main)) {
-        core.warning(`${version.main} is not a valid semver. More info: https://semver.org/`);
-      }
-      if (this.inputs.tagSemver.length > 0 && semver.valid(version.main)) {
-        const sver = semver.parse(version.main, {
-          includePrerelease: true
-        });
-        if (semver.prerelease(version.main)) {
-          version.main = handlebars.compile('{{version}}')(sver);
-        } else {
-          version.latest = this.inputs.tagLatest;
-          version.main = handlebars.compile(this.inputs.tagSemver[0])(sver);
-          for (const semverTpl of this.inputs.tagSemver) {
-            const partial = handlebars.compile(semverTpl)(sver);
-            if (partial == version.main) {
-              continue;
-            }
-            version.partial.push(partial);
-          }
-        }
-      } else if (this.inputs.tagMatch) {
-        let tagMatch;
-        const isRegEx = this.inputs.tagMatch.match(/^\/(.+)\/(.*)$/);
-        if (isRegEx) {
-          tagMatch = version.main.match(new RegExp(isRegEx[1], isRegEx[2]));
-        } else {
-          tagMatch = version.main.match(this.inputs.tagMatch);
-        }
-        if (tagMatch) {
-          version.main = tagMatch[this.inputs.tagMatchGroup];
-          version.latest = this.inputs.tagLatest;
-        }
-      } else {
-        version.latest = this.inputs.tagLatest;
-      }
-    } else if (/^refs\/heads\//.test(this.context.ref)) {
-      version.main = this.context.ref.replace(/^refs\/heads\//g, '').replace(/[^a-zA-Z0-9._-]+/g, '-');
-      if (this.inputs.tagEdge && this.inputs.tagEdgeBranch === version.main) {
-        version.main = 'edge';
-      }
-    } else if (/^refs\/pull\//.test(this.context.ref)) {
-      version.main = `pr-${this.context.ref.replace(/^refs\/pull\//g, '').replace(/\/merge$/g, '')}`;
-    }
-
-    if (this.inputs.tagCustom.length > 0) {
-      if (this.inputs.tagCustomOnly) {
-        version = {
-          main: this.inputs.tagCustom.shift(),
-          partial: this.inputs.tagCustom,
-          latest: false
-        };
-      } else {
-        version.partial.push(...this.inputs.tagCustom);
-      }
-    }
-
-    version.partial = version.partial.filter((item, index) => version.partial.indexOf(item) === index);
-    return version;
-  }
-
   public tags(): Array<string> {
     if (!this.version.main) {
       return [];
@@ -201,5 +125,81 @@ export class Meta {
     );
 
     return bakeFile;
+  }
+
+  private getVersion(): Version {
+    const currentDate = this.date;
+    let version: Version = {
+      main: undefined,
+      partial: [],
+      latest: false
+    };
+
+    if (/schedule/.test(this.context.eventName)) {
+      version.main = handlebars.compile(this.inputs.tagSchedule)({
+        date: function (format) {
+          return moment(currentDate).utc().format(format);
+        }
+      });
+    } else if (/^refs\/tags\//.test(this.context.ref)) {
+      version.main = this.context.ref.replace(/^refs\/tags\//g, '').replace(/\//g, '-');
+      if (this.inputs.tagSemver.length > 0 && !semver.valid(version.main)) {
+        core.warning(`${version.main} is not a valid semver. More info: https://semver.org/`);
+      }
+      if (this.inputs.tagSemver.length > 0 && semver.valid(version.main)) {
+        const sver = semver.parse(version.main, {
+          includePrerelease: true
+        });
+        if (semver.prerelease(version.main)) {
+          version.main = handlebars.compile('{{version}}')(sver);
+        } else {
+          version.latest = this.inputs.tagLatest;
+          version.main = handlebars.compile(this.inputs.tagSemver[0])(sver);
+          for (const semverTpl of this.inputs.tagSemver) {
+            const partial = handlebars.compile(semverTpl)(sver);
+            if (partial == version.main) {
+              continue;
+            }
+            version.partial.push(partial);
+          }
+        }
+      } else if (this.inputs.tagMatch) {
+        let tagMatch;
+        const isRegEx = this.inputs.tagMatch.match(/^\/(.+)\/(.*)$/);
+        if (isRegEx) {
+          tagMatch = version.main.match(new RegExp(isRegEx[1], isRegEx[2]));
+        } else {
+          tagMatch = version.main.match(this.inputs.tagMatch);
+        }
+        if (tagMatch) {
+          version.main = tagMatch[this.inputs.tagMatchGroup];
+          version.latest = this.inputs.tagLatest;
+        }
+      } else {
+        version.latest = this.inputs.tagLatest;
+      }
+    } else if (/^refs\/heads\//.test(this.context.ref)) {
+      version.main = this.context.ref.replace(/^refs\/heads\//g, '').replace(/[^a-zA-Z0-9._-]+/g, '-');
+      if (this.inputs.tagEdge && this.inputs.tagEdgeBranch === version.main) {
+        version.main = 'edge';
+      }
+    } else if (/^refs\/pull\//.test(this.context.ref)) {
+      version.main = `pr-${this.context.ref.replace(/^refs\/pull\//g, '').replace(/\/merge$/g, '')}`;
+    }
+
+    if (this.inputs.tagCustom.length > 0) {
+      if (this.inputs.tagCustomOnly) {
+        version = {
+          main: this.inputs.tagCustom.shift(),
+          partial: this.inputs.tagCustom,
+          latest: false
+        };
+      } else {
+        version.partial.push(...this.inputs.tagCustom);
+      }
+    }
+
+    version.partial = version.partial.filter((item, index) => version.partial.indexOf(item) === index);
+    return version;
   }
 }
