@@ -1656,7 +1656,8 @@
                 }
                 return target;
             }
-            const VERSION = "3.4.0";
+            const VERSION = "3.5.1";
+            const _excluded = [ "authStrategy" ];
             class Octokit {
                 constructor(options = {}) {
                     const hook = new beforeAfterHook.Collection();
@@ -1703,7 +1704,7 @@
                     } else {
                         const {
                             authStrategy
-                        } = options, otherOptions = _objectWithoutProperties(options, [ "authStrategy" ]);
+                        } = options, otherOptions = _objectWithoutProperties(options, _excluded);
                         const auth = authStrategy(Object.assign({
                             request: this.request,
                             log: this.log,
@@ -2022,7 +2023,7 @@
                     parse: parse
                 });
             }
-            const VERSION = "6.0.11";
+            const VERSION = "6.0.12";
             const userAgent = `octokit-endpoint.js/${VERSION} ${universalUserAgent.getUserAgent()}`;
             const DEFAULTS = {
                 method: "GET",
@@ -2068,7 +2069,7 @@
             });
             var request = __nccwpck_require__(6234);
             var universalUserAgent = __nccwpck_require__(5030);
-            const VERSION = "4.6.2";
+            const VERSION = "4.6.4";
             class GraphqlError extends Error {
                 constructor(request, response) {
                     const message = response.data.errors[0].message;
@@ -2160,8 +2161,56 @@
             Object.defineProperty(exports, "__esModule", {
                 value: true
             });
-            const VERSION = "2.13.3";
+            const VERSION = "2.13.5";
+            function ownKeys(object, enumerableOnly) {
+                var keys = Object.keys(object);
+                if (Object.getOwnPropertySymbols) {
+                    var symbols = Object.getOwnPropertySymbols(object);
+                    if (enumerableOnly) {
+                        symbols = symbols.filter(function(sym) {
+                            return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+                        });
+                    }
+                    keys.push.apply(keys, symbols);
+                }
+                return keys;
+            }
+            function _objectSpread2(target) {
+                for (var i = 1; i < arguments.length; i++) {
+                    var source = arguments[i] != null ? arguments[i] : {};
+                    if (i % 2) {
+                        ownKeys(Object(source), true).forEach(function(key) {
+                            _defineProperty(target, key, source[key]);
+                        });
+                    } else if (Object.getOwnPropertyDescriptors) {
+                        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+                    } else {
+                        ownKeys(Object(source)).forEach(function(key) {
+                            Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+                        });
+                    }
+                }
+                return target;
+            }
+            function _defineProperty(obj, key, value) {
+                if (key in obj) {
+                    Object.defineProperty(obj, key, {
+                        value: value,
+                        enumerable: true,
+                        configurable: true,
+                        writable: true
+                    });
+                } else {
+                    obj[key] = value;
+                }
+                return obj;
+            }
             function normalizePaginatedListResponse(response) {
+                if (!response.data) {
+                    return _objectSpread2(_objectSpread2({}, response), {}, {
+                        data: []
+                    });
+                }
                 const responseNeedsNormalization = "total_count" in response.data && !("url" in response.data);
                 if (!responseNeedsNormalization) return response;
                 const incompleteResults = response.data.incomplete_results;
@@ -2194,16 +2243,28 @@
                             if (!url) return {
                                 done: true
                             };
-                            const response = await requestMethod({
-                                method: method,
-                                url: url,
-                                headers: headers
-                            });
-                            const normalizedResponse = normalizePaginatedListResponse(response);
-                            url = ((normalizedResponse.headers.link || "").match(/<([^>]+)>;\s*rel="next"/) || [])[1];
-                            return {
-                                value: normalizedResponse
-                            };
+                            try {
+                                const response = await requestMethod({
+                                    method: method,
+                                    url: url,
+                                    headers: headers
+                                });
+                                const normalizedResponse = normalizePaginatedListResponse(response);
+                                url = ((normalizedResponse.headers.link || "").match(/<([^>]+)>;\s*rel="next"/) || [])[1];
+                                return {
+                                    value: normalizedResponse
+                                };
+                            } catch (error) {
+                                if (error.status !== 409) throw error;
+                                url = "";
+                                return {
+                                    value: {
+                                        status: 200,
+                                        headers: {},
+                                        data: []
+                                    }
+                                };
+                            }
                         }
                     })
                 };
@@ -3401,7 +3462,7 @@
                     updateAuthenticated: [ "PATCH /user" ]
                 }
             };
-            const VERSION = "5.3.0";
+            const VERSION = "5.3.1";
             function endpointsToMethods(octokit, endpointsMap) {
                 const newMethods = {};
                 for (const [ scope, endpoints ] of Object.entries(endpointsMap)) {
@@ -3487,7 +3548,8 @@
             }
             var deprecation = __nccwpck_require__(8932);
             var once = _interopDefault(__nccwpck_require__(1223));
-            const logOnce = once(deprecation => console.warn(deprecation));
+            const logOnceCode = once(deprecation => console.warn(deprecation));
+            const logOnceHeaders = once(deprecation => console.warn(deprecation));
             class RequestError extends Error {
                 constructor(message, statusCode, options) {
                     super(message);
@@ -3496,13 +3558,14 @@
                     }
                     this.name = "HttpError";
                     this.status = statusCode;
-                    Object.defineProperty(this, "code", {
-                        get() {
-                            logOnce(new deprecation.Deprecation("[@octokit/request-error] `error.code` is deprecated, use `error.status`."));
-                            return statusCode;
-                        }
-                    });
-                    this.headers = options.headers || {};
+                    let headers;
+                    if ("headers" in options && typeof options.headers !== "undefined") {
+                        headers = options.headers;
+                    }
+                    if ("response" in options) {
+                        this.response = options.response;
+                        headers = options.response.headers;
+                    }
                     const requestCopy = Object.assign({}, options.request);
                     if (options.request.headers.authorization) {
                         requestCopy.headers = Object.assign({}, options.request.headers, {
@@ -3511,6 +3574,18 @@
                     }
                     requestCopy.url = requestCopy.url.replace(/\bclient_secret=\w+/g, "client_secret=[REDACTED]").replace(/\baccess_token=\w+/g, "access_token=[REDACTED]");
                     this.request = requestCopy;
+                    Object.defineProperty(this, "code", {
+                        get() {
+                            logOnceCode(new deprecation.Deprecation("[@octokit/request-error] `error.code` is deprecated, use `error.status`."));
+                            return statusCode;
+                        }
+                    });
+                    Object.defineProperty(this, "headers", {
+                        get() {
+                            logOnceHeaders(new deprecation.Deprecation("[@octokit/request-error] `error.headers` is deprecated, use `error.response.headers`."));
+                            return headers || {};
+                        }
+                    });
                 }
             }
             exports.RequestError = RequestError;
@@ -3528,11 +3603,12 @@
             var isPlainObject = __nccwpck_require__(9062);
             var nodeFetch = _interopDefault(__nccwpck_require__(467));
             var requestError = __nccwpck_require__(537);
-            const VERSION = "5.4.15";
+            const VERSION = "5.6.0";
             function getBufferResponse(response) {
                 return response.arrayBuffer();
             }
             function fetchWrapper(requestOptions) {
+                const log = requestOptions.request && requestOptions.request.log ? requestOptions.request.log : console;
                 if (isPlainObject.isPlainObject(requestOptions.body) || Array.isArray(requestOptions.body)) {
                     requestOptions.body = JSON.stringify(requestOptions.body);
                 }
@@ -3545,11 +3621,16 @@
                     body: requestOptions.body,
                     headers: requestOptions.headers,
                     redirect: requestOptions.redirect
-                }, requestOptions.request)).then(response => {
+                }, requestOptions.request)).then(async response => {
                     url = response.url;
                     status = response.status;
                     for (const keyAndValue of response.headers) {
                         headers[keyAndValue[0]] = keyAndValue[1];
+                    }
+                    if ("deprecation" in headers) {
+                        const matches = headers.link && headers.link.match(/<([^>]+)>; rel="deprecation"/);
+                        const deprecationLink = matches && matches.pop();
+                        log.warn(`[@octokit/request] "${requestOptions.method} ${requestOptions.url}" is deprecated. It is scheduled to be removed on ${headers.sunset}${deprecationLink ? `. See ${deprecationLink}` : ""}`);
                     }
                     if (status === 204 || status === 205) {
                         return;
@@ -3559,39 +3640,40 @@
                             return;
                         }
                         throw new requestError.RequestError(response.statusText, status, {
-                            headers: headers,
+                            response: {
+                                url: url,
+                                status: status,
+                                headers: headers,
+                                data: undefined
+                            },
                             request: requestOptions
                         });
                     }
                     if (status === 304) {
                         throw new requestError.RequestError("Not modified", status, {
-                            headers: headers,
+                            response: {
+                                url: url,
+                                status: status,
+                                headers: headers,
+                                data: await getResponseData(response)
+                            },
                             request: requestOptions
                         });
                     }
                     if (status >= 400) {
-                        return response.text().then(message => {
-                            const error = new requestError.RequestError(message, status, {
+                        const data = await getResponseData(response);
+                        const error = new requestError.RequestError(toErrorMessage(data), status, {
+                            response: {
+                                url: url,
+                                status: status,
                                 headers: headers,
-                                request: requestOptions
-                            });
-                            try {
-                                let responseBody = JSON.parse(error.message);
-                                Object.assign(error, responseBody);
-                                let errors = responseBody.errors;
-                                error.message = error.message + ": " + errors.map(JSON.stringify).join(", ");
-                            } catch (e) {}
-                            throw error;
+                                data: data
+                            },
+                            request: requestOptions
                         });
+                        throw error;
                     }
-                    const contentType = response.headers.get("content-type");
-                    if (/application\/json/.test(contentType)) {
-                        return response.json();
-                    }
-                    if (!contentType || /^text\/|charset=utf-8$/.test(contentType)) {
-                        return response.text();
-                    }
-                    return getBufferResponse(response);
+                    return getResponseData(response);
                 }).then(data => {
                     return {
                         status: status,
@@ -3600,14 +3682,31 @@
                         data: data
                     };
                 }).catch(error => {
-                    if (error instanceof requestError.RequestError) {
-                        throw error;
-                    }
+                    if (error instanceof requestError.RequestError) throw error;
                     throw new requestError.RequestError(error.message, 500, {
-                        headers: headers,
                         request: requestOptions
                     });
                 });
+            }
+            async function getResponseData(response) {
+                const contentType = response.headers.get("content-type");
+                if (/application\/json/.test(contentType)) {
+                    return response.json();
+                }
+                if (!contentType || /^text\/|charset=utf-8$/.test(contentType)) {
+                    return response.text();
+                }
+                return getBufferResponse(response);
+            }
+            function toErrorMessage(data) {
+                if (typeof data === "string") return data;
+                if ("message" in data) {
+                    if (Array.isArray(data.errors)) {
+                        return `${data.message}: ${data.errors.map(JSON.stringify).join(", ")}`;
+                    }
+                    return data.message;
+                }
+                return `Unknown error: ${JSON.stringify(data)}`;
             }
             function withDefaults(oldEndpoint, newDefaults) {
                 const endpoint = oldEndpoint.defaults(newDefaults);
@@ -3920,12 +4019,14 @@
                     } else if (options.columns === undefined || options.columns === null || options.columns === false) {
                         options.columns = false;
                     } else {
-                        throw new CsvError("CSV_INVALID_OPTION_COLUMNS", [ "Invalid option columns:", "expect an object, a function or true,", `got ${JSON.stringify(options.columns)}` ], options);
+                        throw new CsvError("CSV_INVALID_OPTION_COLUMNS", [ "Invalid option columns:", "expect an array, a function or true,", `got ${JSON.stringify(options.columns)}` ], options);
                     }
                     if (options.columns_duplicates_to_array === undefined || options.columns_duplicates_to_array === null || options.columns_duplicates_to_array === false) {
                         options.columns_duplicates_to_array = false;
                     } else if (options.columns_duplicates_to_array !== true) {
                         throw new CsvError("CSV_INVALID_OPTION_COLUMNS_DUPLICATES_TO_ARRAY", [ "Invalid option columns_duplicates_to_array:", "expect an boolean,", `got ${JSON.stringify(options.columns_duplicates_to_array)}` ], options);
+                    } else if (options.columns === false) {
+                        throw new CsvError("CSV_INVALID_OPTION_COLUMNS_DUPLICATES_TO_ARRAY", [ "Invalid option columns_duplicates_to_array:", "the `columns` mode must be activated." ], options);
                     }
                     if (options.comment === undefined || options.comment === null || options.comment === false || options.comment === "") {
                         options.comment = null;
@@ -4172,10 +4273,9 @@
                         enabled: options.from_line === 1,
                         escaping: false,
                         escapeIsQuote: Buffer.isBuffer(options.escape) && Buffer.isBuffer(options.quote) && Buffer.compare(options.escape, options.quote) === 0,
-                        expectedRecordLength: options.columns === null ? 0 : options.columns.length,
+                        expectedRecordLength: Array.isArray(options.columns) ? options.columns.length : undefined,
                         field: new ResizeableBuffer(20),
                         firstLineToHeaders: fnFirstLineToHeaders,
-                        info: Object.assign({}, this.info),
                         needMoreDataSize: Math.max(options.comment !== null ? options.comment.length : 0, ...options.delimiter.map(delimiter => delimiter.length), options.quote !== null ? options.quote.length : 0),
                         previousBuf: undefined,
                         quoting: false,
@@ -4213,7 +4313,6 @@
                         comment,
                         escape,
                         from_line,
-                        info,
                         ltrim,
                         max_record_size,
                         quote,
@@ -4276,9 +4375,6 @@
                         }
                         if (this.state.wasRowDelimiter === true) {
                             this.info.lines++;
-                            if (info === true && this.state.record.length === 0 && this.state.field.length === 0 && this.state.wasQuoting === false) {
-                                this.state.info = Object.assign({}, this.info);
-                            }
                             this.state.wasRowDelimiter = false;
                         }
                         if (to_line !== -1 && this.info.lines > to_line) {
@@ -4330,7 +4426,7 @@
                                         pos += quote.length - 1;
                                         continue;
                                     } else if (relax === false) {
-                                        const err = this.__error(new CsvError("CSV_INVALID_CLOSING_QUOTE", [ "Invalid Closing Quote:", `got "${String.fromCharCode(nextChr)}"`, `at line ${this.info.lines}`, "instead of delimiter, record delimiter, trimable character", "(if activated) or comment" ], this.options, this.__context()));
+                                        const err = this.__error(new CsvError("CSV_INVALID_CLOSING_QUOTE", [ "Invalid Closing Quote:", `got "${String.fromCharCode(nextChr)}"`, `at line ${this.info.lines}`, "instead of delimiter, record delimiter, trimable character", "(if activated) or comment" ], this.options, this.__infoField()));
                                         if (err !== undefined) return err;
                                     } else {
                                         this.state.quoting = false;
@@ -4341,7 +4437,7 @@
                                 } else {
                                     if (this.state.field.length !== 0) {
                                         if (relax === false) {
-                                            const err = this.__error(new CsvError("INVALID_OPENING_QUOTE", [ "Invalid Opening Quote:", `a quote is found inside a field at line ${this.info.lines}` ], this.options, this.__context(), {
+                                            const err = this.__error(new CsvError("INVALID_OPENING_QUOTE", [ "Invalid Opening Quote:", `a quote is found inside a field at line ${this.info.lines}` ], this.options, this.__infoField(), {
                                                 field: this.state.field
                                             }));
                                             if (err !== undefined) return err;
@@ -4405,7 +4501,7 @@
                         }
                         if (this.state.commenting === false) {
                             if (max_record_size !== 0 && this.state.record_length + this.state.field.length > max_record_size) {
-                                const err = this.__error(new CsvError("CSV_MAX_RECORD_SIZE", [ "Max Record Size:", "record exceed the maximum number of tolerated bytes", `of ${max_record_size}`, `at line ${this.info.lines}` ], this.options, this.__context()));
+                                const err = this.__error(new CsvError("CSV_MAX_RECORD_SIZE", [ "Max Record Size:", "record exceed the maximum number of tolerated bytes", `of ${max_record_size}`, `at line ${this.info.lines}` ], this.options, this.__infoField()));
                                 if (err !== undefined) return err;
                             }
                         }
@@ -4414,13 +4510,13 @@
                         if (lappend === true && rappend === true) {
                             this.state.field.append(chr);
                         } else if (rtrim === true && !this.__isCharTrimable(chr)) {
-                            const err = this.__error(new CsvError("CSV_NON_TRIMABLE_CHAR_AFTER_CLOSING_QUOTE", [ "Invalid Closing Quote:", "found non trimable byte after quote", `at line ${this.info.lines}` ], this.options, this.__context()));
+                            const err = this.__error(new CsvError("CSV_NON_TRIMABLE_CHAR_AFTER_CLOSING_QUOTE", [ "Invalid Closing Quote:", "found non trimable byte after quote", `at line ${this.info.lines}` ], this.options, this.__infoField()));
                             if (err !== undefined) return err;
                         }
                     }
                     if (end === true) {
                         if (this.state.quoting === true) {
-                            const err = this.__error(new CsvError("CSV_QUOTE_NOT_CLOSED", [ "Quote Not Closed:", `the parsing is finished with an opening quote at line ${this.info.lines}` ], this.options, this.__context()));
+                            const err = this.__error(new CsvError("CSV_QUOTE_NOT_CLOSED", [ "Quote Not Closed:", `the parsing is finished with an opening quote at line ${this.info.lines}` ], this.options, this.__infoField()));
                             if (err !== undefined) return err;
                         } else {
                             if (this.state.wasQuoting === true || this.state.record.length !== 0 || this.state.field.length !== 0) {
@@ -4464,7 +4560,7 @@
                     }
                     const recordLength = record.length;
                     if (columns === true) {
-                        if (isRecordEmpty(record)) {
+                        if (skip_lines_with_empty_values === true && isRecordEmpty(record)) {
                             this.__resetRecord();
                             return;
                         }
@@ -4474,9 +4570,9 @@
                         this.state.expectedRecordLength = recordLength;
                     }
                     if (recordLength !== this.state.expectedRecordLength) {
-                        const err = columns === false ? new CsvError("CSV_INCONSISTENT_RECORD_LENGTH", [ "Invalid Record Length:", `expect ${this.state.expectedRecordLength},`, `got ${recordLength} on line ${this.info.lines}` ], this.options, this.__context(), {
+                        const err = columns === false ? new CsvError("CSV_INCONSISTENT_RECORD_LENGTH", [ "Invalid Record Length:", `expect ${this.state.expectedRecordLength},`, `got ${recordLength} on line ${this.info.lines}` ], this.options, this.__infoField(), {
                             record: record
-                        }) : new CsvError("CSV_RECORD_DONT_MATCH_COLUMNS_LENGTH", [ "Invalid Record Length:", `columns length is ${columns.length},`, `got ${recordLength} on line ${this.info.lines}` ], this.options, this.__context(), {
+                        }) : new CsvError("CSV_RECORD_DONT_MATCH_COLUMNS_LENGTH", [ "Invalid Record Length:", `columns length is ${columns.length},`, `got ${recordLength} on line ${this.info.lines}` ], this.options, this.__infoField(), {
                             record: record
                         });
                         if (relax_column_count === true || relax_column_count_less === true && recordLength < this.state.expectedRecordLength || relax_column_count_more === true && recordLength > this.state.expectedRecordLength) {
@@ -4487,11 +4583,9 @@
                             if (finalErr) return finalErr;
                         }
                     }
-                    if (skip_lines_with_empty_values === true) {
-                        if (isRecordEmpty(record)) {
-                            this.__resetRecord();
-                            return;
-                        }
+                    if (skip_lines_with_empty_values === true && isRecordEmpty(record)) {
+                        this.__resetRecord();
+                        return;
                     }
                     if (this.state.recordHasError === true) {
                         this.__resetRecord();
@@ -4524,7 +4618,7 @@
                                     }, raw === true ? {
                                         raw: this.state.rawBuffer.toString(encoding)
                                     } : {}, info === true ? {
-                                        info: this.state.info
+                                        info: this.__infoRecord()
                                     } : {}));
                                     if (err) {
                                         return err;
@@ -4542,7 +4636,7 @@
                                     }, raw === true ? {
                                         raw: this.state.rawBuffer.toString(encoding)
                                     } : {}, info === true ? {
-                                        info: this.state.info
+                                        info: this.__infoRecord()
                                     } : {}));
                                     if (err) {
                                         return err;
@@ -4561,7 +4655,7 @@
                                 }, raw === true ? {
                                     raw: this.state.rawBuffer.toString(encoding)
                                 } : {}, info === true ? {
-                                    info: this.state.info
+                                    info: this.__infoRecord()
                                 } : {}));
                                 if (err) {
                                     return err;
@@ -4583,7 +4677,7 @@
                     try {
                         const headers = firstLineToHeaders === undefined ? record : firstLineToHeaders.call(null, record);
                         if (!Array.isArray(headers)) {
-                            return this.__error(new CsvError("CSV_INVALID_COLUMN_MAPPING", [ "Invalid Column Mapping:", "expect an array from column function,", `got ${JSON.stringify(headers)}` ], this.options, this.__context(), {
+                            return this.__error(new CsvError("CSV_INVALID_COLUMN_MAPPING", [ "Invalid Column Mapping:", "expect an array from column function,", `got ${JSON.stringify(headers)}` ], this.options, this.__infoField(), {
                                 headers: headers
                             }));
                         }
@@ -4642,9 +4736,9 @@
                         on_record
                     } = this.options;
                     if (on_record !== undefined) {
-                        const context = this.__context();
+                        const info = this.__infoRecord();
                         try {
-                            record = on_record.call(null, record, context);
+                            record = on_record.call(null, record, info);
                         } catch (err) {
                             return err;
                         }
@@ -4663,10 +4757,10 @@
                     if (isColumns === true && relax_column_count && this.options.columns.length <= this.state.record.length) {
                         return [ undefined, undefined ];
                     }
-                    const context = this.__context();
                     if (this.state.castField !== null) {
                         try {
-                            return [ undefined, this.state.castField.call(null, field, context) ];
+                            const info = this.__infoField();
+                            return [ undefined, this.state.castField.call(null, field, info) ];
                         } catch (err) {
                             return [ err ];
                         }
@@ -4674,7 +4768,8 @@
                     if (this.__isFloat(field)) {
                         return [ undefined, parseFloat(field) ];
                     } else if (this.options.cast_date !== false) {
-                        return [ undefined, this.options.cast_date.call(null, field, context) ];
+                        const info = this.__infoField();
+                        return [ undefined, this.options.cast_date.call(null, field, info) ];
                     }
                     return [ undefined, field ];
                 }
@@ -4811,21 +4906,32 @@
                         return err;
                     }
                 }
-                __context() {
+                __infoDataSet() {
+                    return {
+                        ...this.info,
+                        columns: this.options.columns
+                    };
+                }
+                __infoRecord() {
+                    const {
+                        columns
+                    } = this.options;
+                    return {
+                        ...this.__infoDataSet(),
+                        error: this.state.error,
+                        header: columns === true,
+                        index: this.state.record.length
+                    };
+                }
+                __infoField() {
                     const {
                         columns
                     } = this.options;
                     const isColumns = Array.isArray(columns);
                     return {
+                        ...this.__infoRecord(),
                         column: isColumns === true ? columns.length > this.state.record.length ? columns[this.state.record.length].name : null : this.state.record.length,
-                        empty_lines: this.info.empty_lines,
-                        error: this.state.error,
-                        header: columns === true,
-                        index: this.state.record.length,
-                        invalid_field_length: this.info.invalid_field_length,
-                        quoting: this.state.wasQuoting,
-                        lines: this.info.lines,
-                        records: this.info.records
+                        quoting: this.state.wasQuoting
                     };
                 }
             }
@@ -4858,10 +4964,10 @@
                         }
                     });
                     parser.on("error", function(err) {
-                        callback(err, undefined, parser.info);
+                        callback(err, undefined, parser.__infoDataSet());
                     });
                     parser.on("end", function() {
-                        callback(undefined, records, parser.info);
+                        callback(undefined, records, parser.__infoDataSet());
                     });
                 }
                 if (data !== undefined) {
