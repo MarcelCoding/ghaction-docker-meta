@@ -668,7 +668,7 @@
             Object.defineProperty(exports, "__esModule", {
                 value: true
             });
-            exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
+            exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
             const command_1 = __nccwpck_require__(7351);
             const file_command_1 = __nccwpck_require__(717);
             const utils_1 = __nccwpck_require__(5278);
@@ -719,6 +719,11 @@
                 return val.trim();
             }
             exports.getInput = getInput;
+            function getMultilineInput(name, options) {
+                const inputs = getInput(name, options).split("\n").filter(x => x !== "");
+                return inputs;
+            }
+            exports.getMultilineInput = getMultilineInput;
             function getBooleanInput(name, options) {
                 const trueValue = [ "true", "True", "TRUE" ];
                 const falseValue = [ "false", "False", "FALSE" ];
