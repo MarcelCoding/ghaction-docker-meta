@@ -1,12 +1,9 @@
-import * as handlebars from 'handlebars';
-import * as fs from 'fs';
-import * as path from 'path';
-import moment from 'moment';
-import * as semver from 'semver';
-import {Inputs, tmpDir} from './context';
-import * as core from '@actions/core';
+import {compile as hbCompile} from 'handlebars';
+import {parse as semParse, prerelease as semPreRelease, valid as semValid} from 'semver';
+import {Inputs} from './context';
+import {warning} from '@actions/core';
 import {Context} from '@actions/github/lib/context';
-import * as github from './github';
+import {Repository} from './github';
 
 export interface Version {
   main: string | undefined;
@@ -15,25 +12,23 @@ export interface Version {
 }
 
 export class Meta {
-  public readonly version: Version;
 
-  private readonly inputs: Inputs;
-  private readonly context: Context;
-  private readonly repo: github.ReposGetResponseData;
+  public readonly version: Version;
   private readonly date: Date;
 
-  constructor(inputs: Inputs, context: Context, repo: github.ReposGetResponseData) {
-    this.inputs = inputs;
+  constructor(
+      private readonly inputs: Inputs,
+      private readonly context: Context,
+      private readonly repo: Repository
+  ) {
     if (!this.inputs.tagEdgeBranch) {
       this.inputs.tagEdgeBranch = repo.default_branch;
     }
-    this.context = context;
-    this.repo = repo;
     this.date = new Date();
     this.version = this.getVersion();
   }
 
-  public tags(): Array<string> {
+  public tags(): string[] {
     if (!this.version.main) {
       return [];
     }
@@ -41,7 +36,8 @@ export class Meta {
     let flavor = this.inputs.flavor;
     let main = !flavor || this.inputs.mainFlavor;
 
-    let tags: Array<string> = [];
+    let tags: string[] = [];
+
     for (const image of this.inputs.images) {
       const imageLc = image.toLowerCase();
       if (main) {
@@ -66,20 +62,12 @@ export class Meta {
           tags.push(`${imageLc}:${flavor}`);
         }
       }
-      if (this.context.sha && this.inputs.tagSha) {
-        if (main) {
-          tags.push(`${imageLc}:sha-${this.context.sha.substr(0, 7)}`);
-        }
-        if (flavor) {
-          tags.push(`${imageLc}:sha-${this.context.sha.substr(0, 7)}-${flavor}`);
-        }
-      }
     }
     return tags;
   }
 
-  public labels(): Array<string> {
-    let labels: Array<string> = [
+  public labels(): string[] {
+    let labels = [
       `org.opencontainers.image.title=${this.repo.name || ''}`,
       `org.opencontainers.image.description=${this.repo.description || ''}`,
       `org.opencontainers.image.url=${this.repo.html_url || ''}`,
@@ -93,42 +81,9 @@ export class Meta {
     return labels;
   }
 
-  public bakeFile(): string {
-    let jsonLabels = {};
-    for (let label of this.labels()) {
-      const matches = label.match(/([^=]*)=(.*)/);
-      if (!matches) {
-        continue;
-      }
-      jsonLabels[matches[1]] = matches[2];
-    }
-
-    const bakeFile = path.join(tmpDir(), 'ghaction-docker-meta-bake.json').split(path.sep).join(path.posix.sep);
-    fs.writeFileSync(
-      bakeFile,
-      JSON.stringify(
-        {
-          target: {
-            'ghaction-docker-meta': {
-              tags: this.tags(),
-              labels: jsonLabels,
-              args: {
-                DOCKER_META_IMAGES: this.inputs.images.join(','),
-                DOCKER_META_VERSION: this.version.main
-              }
-            }
-          }
-        },
-        null,
-        2
-      )
-    );
-
-    return bakeFile;
-  }
-
   private getVersion(): Version {
     const currentDate = this.date;
+
     let version: Version = {
       main: undefined,
       partial: [],
@@ -136,54 +91,43 @@ export class Meta {
     };
 
     if (/schedule/.test(this.context.eventName)) {
-      version.main = handlebars.compile(this.inputs.tagSchedule)({
-        date: function (format) {
-          return moment(currentDate).utc().format(format);
-        }
-      });
-    } else if (/^refs\/tags\//.test(this.context.ref)) {
+      version.main = this.inputs.tagSchedule;
+    }
+    else if (/^refs\/tags\//.test(this.context.ref)) {
       version.main = this.context.ref.replace(/^refs\/tags\//g, '').replace(/\//g, '-');
-      if (this.inputs.tagSemver.length > 0 && !semver.valid(version.main)) {
-        core.warning(`${version.main} is not a valid semver. More info: https://semver.org/`);
+      if (this.inputs.tagSemver.length > 0 && !semValid(version.main)) {
+        warning(`${version.main} is not a valid semver. More info: https://semver.org/`);
       }
-      if (this.inputs.tagSemver.length > 0 && semver.valid(version.main)) {
-        const sver = semver.parse(version.main, {
+      if (this.inputs.tagSemver.length > 0 && semValid(version.main)) {
+        const sver = semParse(version.main, {
           includePrerelease: true
         });
-        if (semver.prerelease(version.main)) {
-          version.main = handlebars.compile('{{version}}')(sver);
-        } else {
+        if (semPreRelease(version.main)) {
+          version.main = hbCompile('{{version}}')(sver);
+        }
+        else {
           version.latest = this.inputs.tagLatest;
-          version.main = handlebars.compile(this.inputs.tagSemver[0])(sver);
+          version.main = hbCompile(this.inputs.tagSemver[0])(sver);
           for (const semverTpl of this.inputs.tagSemver) {
-            const partial = handlebars.compile(semverTpl)(sver);
+            const partial = hbCompile(semverTpl)(sver);
             if (partial == version.main) {
               continue;
             }
             version.partial.push(partial);
           }
         }
-      } else if (this.inputs.tagMatch) {
-        let tagMatch;
-        const isRegEx = this.inputs.tagMatch.match(/^\/(.+)\/(.*)$/);
-        if (isRegEx) {
-          tagMatch = version.main.match(new RegExp(isRegEx[1], isRegEx[2]));
-        } else {
-          tagMatch = version.main.match(this.inputs.tagMatch);
-        }
-        if (tagMatch) {
-          version.main = tagMatch[this.inputs.tagMatchGroup];
-          version.latest = this.inputs.tagLatest;
-        }
-      } else {
+      }
+      else {
         version.latest = this.inputs.tagLatest;
       }
-    } else if (/^refs\/heads\//.test(this.context.ref)) {
+    }
+    else if (/^refs\/heads\//.test(this.context.ref)) {
       version.main = this.context.ref.replace(/^refs\/heads\//g, '').replace(/[^a-zA-Z0-9._-]+/g, '-');
       if (this.inputs.tagEdge && this.inputs.tagEdgeBranch === version.main) {
         version.main = 'edge';
       }
-    } else if (/^refs\/pull\//.test(this.context.ref)) {
+    }
+    else if (/^refs\/pull\//.test(this.context.ref)) {
       version.main = `pr-${this.context.ref.replace(/^refs\/pull\//g, '').replace(/\/merge$/g, '')}`;
     }
 
@@ -194,7 +138,8 @@ export class Meta {
           partial: this.inputs.tagCustom,
           latest: false
         };
-      } else {
+      }
+      else {
         version.partial.push(...this.inputs.tagCustom);
       }
     }

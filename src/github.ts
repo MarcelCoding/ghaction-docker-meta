@@ -1,20 +1,21 @@
-import * as github from '@actions/github';
+import {context as ghContext, getOctokit} from '@actions/github';
 import {Context} from '@actions/github/lib/context';
 import {Endpoints} from '@octokit/types';
 
-export type ReposGetResponseData = Endpoints['GET /repos/{owner}/{repo}']['response']['data'];
+export type Repository = Endpoints['GET /repos/{owner}/{repo}']['response']['data'];
 
-export function context(): Context {
-  return github.context;
+export function getContext(): Context {
+  return ghContext;
 }
 
-export async function repo(token: string): Promise<ReposGetResponseData> {
-  const octokit = github.getOctokit(token);
-  const repo = await octokit.rest.repos.get({
-    ...github.context.repo
-  });
+export async function getRepository(token: string): Promise<Repository> {
+  const octokit = getOctokit(token);
+
+  const repo = await octokit.rest.repos.get(ghContext.repo);
+
   if (!repo?.data) {
     throw new Error('Cannot get GitHub repository');
   }
+
   return repo.data;
 }

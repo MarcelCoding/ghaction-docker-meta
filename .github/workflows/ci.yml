@@ -2,12 +2,10 @@ name: ci
 
 on:
   schedule:
-    - cron: '0 */4 * * *' # every 4 hours
+    - cron: '0 0 * * *' # every 4 hours
   push:
-    branches:
-      - '**'
     tags:
-      - 'v*.*.*'
+      - 'v*'
   pull_request:
 
 env:
@@ -16,12 +14,12 @@ env:
 jobs:
   multi-images:
     runs-on: ubuntu-latest
+
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      -
-        name: Docker meta
+
+      - name: Docker meta
         uses: ./
         with:
           images: |
@@ -31,20 +29,19 @@ jobs:
 
   tag-schedule:
     runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
         tag-schedule:
           - ""
-          - "cron-{{date 'YYYYMMDD'}}"
-          - "{{date 'YYYYMMDD-HHmmss'}}"
           - "schedule"
+
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      -
-        name: Docker meta
+
+      - name: Docker meta
         uses: ./
         with:
           images: |
@@ -53,47 +50,21 @@ jobs:
           tag-sha: true
           tag-schedule: ${{ matrix.tag-schedule }}
 
-  tag-match:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - tag-match: '\d{1,3}.\d{1,3}.\d{1,3}'
-            tag-match-group: '0'
-          - tag-match: '\d{1,3}.\d{1,3}'
-            tag-match-group: '0'
-          - tag-match: 'v(.*)'
-            tag-match-group: '1'
-    steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v2
-      -
-        name: Docker meta
-        uses: ./
-        with:
-          images: |
-            ${{ env.DOCKER_IMAGE }}
-            ghcr.io/name/app
-          tag-sha: true
-          tag-match: ${{ matrix.tag-match }}
-          tag-match-group: ${{ matrix.tag-match-group }}
-
   tag-semver:
     runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
         tag-latest:
           - 'true'
           - 'false'
+
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      -
-        name: Docker meta
+
+      - name: Docker meta
         uses: ./
         with:
           images: |
@@ -107,12 +78,12 @@ jobs:
 
   label-custom:
     runs-on: ubuntu-latest
+
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      -
-        name: Docker meta
+
+      - name: Docker meta
         uses: ./
         with:
           images: |
@@ -126,17 +97,18 @@ jobs:
 
   docker-push:
     runs-on: ubuntu-latest
+
     services:
       registry:
         image: registry:2
         ports:
           - 5000:5000
+
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      -
-        name: Docker meta
+
+      - name: Docker meta
         id: docker_meta
         uses: ./
         with:
@@ -146,16 +118,16 @@ jobs:
             v{{version}}
             v{{major}}.{{minor}}
             v{{major}}
-      -
-        name: Set up QEMU
+
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
-      -
-        name: Set up Docker Buildx
+
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
         with:
           driver-opts: network=host
-      -
-        name: Build and push to local registry
+
+      - name: Build and push to local registry
         uses: docker/build-push-action@v2
         with:
           context: ./test
@@ -164,51 +136,16 @@ jobs:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-      -
-        name: Inspect image
+
+      - name: Inspect image
         run: |
           docker pull ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}
           docker image inspect ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}
-      -
-        name: Check manifest
+
+      - name: Check manifest
         run: |
           docker buildx imagetools inspect ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}
-      -
-        name: Dump context
+
+      - name: Dump context
         if: always()
         uses: crazy-max/ghaction-dump-context@v1
-
-  bake:
-    runs-on: ubuntu-latest
-    steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v2
-      -
-        name: Docker meta
-        id: docker_meta
-        uses: ./
-        with:
-          images: |
-            ${{ env.DOCKER_IMAGE }}
-            ghcr.io/name/app
-          tag-sha: true
-          tag-semver: |
-            {{version}}
-            {{major}}.{{minor}}
-            {{major}}
-      -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      -
-        name: Build
-        uses: docker/bake-action@v1
-        with:
-          files: |
-            ./test/docker-bake.hcl
-            ${{ steps.docker_meta.outputs.bake-file }}
-          targets: |
-            release

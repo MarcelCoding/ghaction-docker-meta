@@ -1,19 +1,16 @@
-import csvparse from 'csv-parse/lib/sync';
-import * as core from '@actions/core';
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
+import {parse as csvParse} from "../node_modules/csv-parse/dist/esm/sync";
+import {getInput} from '@actions/core';
+import {mkdtempSync} from 'fs';
+import {tmpdir} from 'os';
+import {join as joinPath, posix, sep as pathSep} from 'path';
 
 let _tmpDir: string;
 
 export interface Inputs {
   images: string[];
-  tagSha: boolean;
   tagEdge: boolean;
   tagEdgeBranch: string;
   tagSemver: string[];
-  tagMatch: string;
-  tagMatchGroup: number;
   tagLatest: boolean;
   tagSchedule: string;
   tagCustom: string[];
@@ -28,7 +25,7 @@ export interface Inputs {
 
 export function tmpDir(): string {
   if (!_tmpDir) {
-    _tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ghaction-docker-meta-')).split(path.sep).join(path.posix.sep);
+    _tmpDir = mkdtempSync(joinPath(tmpdir(), 'ghaction-docker-meta-')).split(pathSep).join(posix.sep);
   }
   return _tmpDir;
 }
@@ -36,42 +33,43 @@ export function tmpDir(): string {
 export function getInputs(): Inputs {
   return {
     images: getInputList('images'),
-    tagSha: /true/i.test(core.getInput('tag-sha') || 'false'),
-    tagEdge: /true/i.test(core.getInput('tag-edge') || 'false'),
-    tagEdgeBranch: core.getInput('tag-edge-branch'),
+    tagEdge: /true/i.test(getInput('tag-edge') || 'false'),
+    tagEdgeBranch: getInput('tag-edge-branch'),
     tagSemver: getInputList('tag-semver'),
-    tagMatch: core.getInput('tag-match'),
-    tagMatchGroup: Number(core.getInput('tag-match-group')) || 0,
-    tagLatest: /true/i.test(core.getInput('tag-latest') || core.getInput('tag-match-latest') || 'true'),
-    tagSchedule: core.getInput('tag-schedule') || 'nightly',
+    tagLatest: /true/i.test(getInput('tag-latest') || 'true'),
+    tagSchedule: getInput('tag-schedule') || 'nightly',
     tagCustom: getInputList('tag-custom'),
-    tagCustomOnly: /true/i.test(core.getInput('tag-custom-only') || 'false'),
+    tagCustomOnly: /true/i.test(getInput('tag-custom-only') || 'false'),
     labelCustom: getInputList('label-custom', true),
-    sepTags: core.getInput('sep-tags') || `\n`,
-    sepLabels: core.getInput('sep-labels') || `\n`,
-    githubToken: core.getInput('github-token'),
-    flavor: core.getInput('flavor'),
-    mainFlavor: /true/i.test(core.getInput('main-flavor') || 'true')
+    sepTags: getInput('sep-tags') || `\n`,
+    sepLabels: getInput('sep-labels') || `\n`,
+    githubToken: getInput('github-token'),
+    flavor: getInput('flavor'),
+    mainFlavor: /true/i.test(getInput('main-flavor') || 'true')
   };
 }
 
 export function getInputList(name: string, ignoreComma?: boolean): string[] {
-  let res: Array<string> = [];
+  let res: string[] = [];
 
-  const items = core.getInput(name);
-  if (items == '') {
+  const items = getInput(name);
+  if (!items.length) {
     return res;
   }
 
-  for (let output of csvparse(items, {
+  const options: string[][] = csvParse(items, {
     columns: false,
     relaxColumnCount: true,
-    skipLinesWithEmptyValues: true
-  }) as Array<string[]>) {
+    skipEmptyLines: true,
+    skipRecordsWithEmptyValues: true
+  });
+
+  for (let output of options) {
     if (output.length == 1) {
       res.push(output[0]);
       continue;
-    } else if (!ignoreComma) {
+    }
+    else if (!ignoreComma) {
       res.push(...output);
       continue;
     }
@@ -81,8 +79,8 @@ export function getInputList(name: string, ignoreComma?: boolean): string[] {
   return res.filter(item => item).map(pat => pat.trim());
 }
 
-export const asyncForEach = async (array, callback) => {
+export async function asyncForEach<T>(array: T[], callback: (ele: T, index: number, arr: T[]) => Promise<void>) {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
   }
-};
+}

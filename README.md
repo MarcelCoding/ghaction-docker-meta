@@ -1,13 +1,10 @@
-[![GitHub release](https://img.shields.io/github/release/marcelcoding/ghaction-docker-meta.svg?style=flat-square)](https://github.com/marcelcoding/ghaction-docker-meta/releases/latest)
-[![Test workflow](https://img.shields.io/github/workflow/status/marcelcoding/ghaction-docker-meta/test?label=test&logo=github&style=flat-square)](https://github.com/marcelcoding/ghaction-docker-meta/actions?workflow=test)
-
 ## About
 
 GitHub Action to extract metadata (tags, labels) for Docker. This action is particularly useful if used with
 [Docker Build Push](https://github.com/docker/build-push-action) action.
 
-This action was originally created by [@crazy-max](https://github.com/crazy-max/ghaction-docker-meta/). He created a v2 with many changes that I don't like.
-Therefore I forked the v1 and maintain it now.
+This action was originally created by [@crazy-max](https://github.com/crazy-max/ghaction-docker-meta/). He created a v2
+with many changes that I don't like. Therefore, I forked the v1 and maintain it now.
 
 ![Screenshot](.github/ghaction-docker-meta.png)
 ___
@@ -38,31 +35,31 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      -
-        name: Docker meta
+
+      - name: Docker meta
         id: docker_meta
         uses: MarcelCoding/ghaction-docker-meta@v1
         with:
           images: name/app
-      -
-        name: Set up QEMU
+
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
-      -
-        name: Set up Docker Buildx
+
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      -
-        name: Login to DockerHub
+
+      - name: Login to DockerHub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Build and push
+
+      - name: Build and push
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -98,11 +95,10 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      -
-        name: Docker meta
+
+      - name: Docker meta
         id: docker_meta
         uses: MarcelCoding/ghaction-docker-meta@v1
         with:
@@ -110,21 +106,21 @@ jobs:
           tag-semver: |
             {{version}}
             {{major}}.{{minor}}
-      -
-        name: Set up QEMU
+
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
-      -
-        name: Set up Docker Buildx
+
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      -
-        name: Login to DockerHub
+
+      - name: Login to DockerHub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Build and push
+
+      - name: Build and push
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -133,100 +129,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-```
-
-### Bake definition
-
-This action also handles a bake definition file that can be used with the
-[Docker Bake action](https://github.com/docker/bake-action). You just have to declare an empty target named
-`ghaction-docker-meta` and inherit from it.
-
-```hcl
-// docker-bake.hcl
-
-target "ghaction-docker-meta" {}
-
-target "build" {
-  inherits = ["ghaction-docker-meta"]
-  context = "./"
-  dockerfile = "Dockerfile"
-  platforms = ["linux/amd64", "linux/arm/v6", "linux/arm/v7", "linux/arm64", "linux/386", "linux/ppc64le"]
-}
-```
-
-```yaml
-name: ci
-
-on:
-  push:
-    branches:
-      - '**'
-    tags:
-      - 'v*'
-  pull_request:
-
-jobs:
-  docker:
-    runs-on: ubuntu-latest
-    steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v2
-      -
-        name: Docker meta
-        id: docker_meta
-        uses: MarcelCoding/ghaction-docker-meta@v1
-        with:
-          images: name/app
-          tag-sha: true
-          tag-semver: |
-            {{version}}
-            {{major}}.{{minor}}
-      -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      -
-        name: Build
-        uses: docker/bake-action@v1
-        with:
-          files: |
-            ./docker-bake.hcl
-            ${{ steps.docker_meta.outputs.bake-file }}
-          targets: |
-            build
-```
-
-Content of `${{ steps.docker_meta.outputs.bake-file }}` file will look like this:
-
-```json
-{
-  "target": {
-    "ghaction-docker-meta": {
-      "tags": [
-        "name/app:1.1.1",
-        "name/app:1.1",
-        "name/app:latest"
-      ],
-      "labels": {
-        "org.opencontainers.image.title": "Hello-World",
-        "org.opencontainers.image.description": "This your first repo!",
-        "org.opencontainers.image.url": "https://github.com/octocat/Hello-World",
-        "org.opencontainers.image.source": "https://github.com/octocat/Hello-World",
-        "org.opencontainers.image.version": "1.1.1",
-        "org.opencontainers.image.created": "2020-01-10T00:30:00.000Z",
-        "org.opencontainers.image.revision": "90dd6032fac8bda1b6c4436a2e65de27961ed071",
-        "org.opencontainers.image.licenses": "MIT"
-      },
-      "args": {
-        "DOCKER_META_IMAGES": "name/app",
-        "DOCKER_META_VERSION": "1.1.1"
-      }
-    }
-  }
-}
 ```
 
 ## Customizing
@@ -248,46 +150,41 @@ Following inputs can be used as `step.with` keys
 > images: name/app,ghcr.io/name/app
 > ```
 
-| Name                | Type     | Description                        |
-|---------------------|----------|------------------------------------|
-| `images`            | List/CSV | List of Docker images to use as base name for tags |
-| `tag-sha`           | Bool     | Add git short commit as Docker tag (default `false`) |
-| `tag-edge`          | Bool     | Enable edge branch tagging (default `false`) |
-| `tag-edge-branch`   | String   | Branch that will be tagged as edge (default `repo.default_branch`) |
-| `tag-semver`        | List/CSV | Handle Git tag as semver [template](#handle-semver-tag) if possible |
-| `tag-match`         | String   | RegExp to match against a Git tag and use first match as Docker tag |
-| `tag-match-group`   | Number   | Group to get if `tag-match` matches (default `0`) |
+| Name                | Type     | Description                                                                                   |
+|---------------------|----------|-----------------------------------------------------------------------------------------------|
+| `images`            | List/CSV | List of Docker images to use as base name for tags                                            |
+| `tag-edge`          | Bool     | Enable edge branch tagging (default `true`)                                                   |
+| `tag-edge-branch`   | String   | Branch that will be tagged as edge (default `repo.default_branch`)                            |
+| `tag-semver`        | List/CSV | Handle Git tag as semver [template](#handle-semver-tag) if possible (default `true`)          |
 | `tag-latest`        | Bool     | Set `latest` Docker tag if `tag-semver`, `tag-match` or Git tag event occurs (default `true`) |
-| `tag-schedule`      | String   | [Template](#schedule-tag) to apply to schedule tag (default `nightly`) |
-| `tag-custom`        | List/CSV | List of custom tags |
-| `tag-custom-only`   | Bool     | Only use `tag-custom` as Docker tags |
-| `label-custom`      | List     | List of custom labels |
-| `sep-tags`          | String   | Separator to use for tags output (default `\n`) |
-| `sep-labels`        | String   | Separator to use for labels output (default `\n`) |
-| `flavor`            | String   | Tag suffix to be appended, specifying the image flavor (default ``) |
-| `main-flavor`       | String   | Enable tags without flavor suffix (default `true`) |
+| `tag-schedule`      | String   | Tag to apply to schedule tag (default `nightly`)                                              |
+| `tag-custom`        | List/CSV | List of custom tags                                                                           |
+| `tag-custom-only`   | Bool     | Only use `tag-custom` as Docker tags                                                          |
+| `label-custom`      | List     | List of custom labels                                                                         |
+| `sep-tags`          | String   | Separator to use for tags output (default `\n`)                                               |
+| `sep-labels`        | String   | Separator to use for labels output (default `\n`)                                             |
+| `flavor`            | String   | Tag suffix to be appended, specifying the image flavor (default ``)                           |
+| `main-flavor`       | String   | Enable tags without flavor suffix (default `true`)                                            |
 
-> `tag-semver` and `tag-match` are mutually exclusive
+> `tag-semver` is mutually exclusive
 
 ### outputs
 
 Following outputs are available
 
-| Name          | Type    | Description                           |
-|---------------|---------|---------------------------------------|
-| `version`     | String  | Docker image version |
-| `tags`        | String  | Docker tags |
-| `labels`      | String  | Docker labels |
-| `bake-file`   | File    | [Bake definition file](https://github.com/docker/buildx#file-definition) path |
+| Name      | Type   | Description          |
+|-----------|--------|----------------------|
+| `version` | String | Docker image version |
+| `tags`    | String | Docker tags          |
+| `labels`  | String | Docker labels        |     
 
 ## Notes
 
 ### Latest tag
 
-Latest Docker tag will be generated by default on `push tag` event. If for example you push the `v1.2.3` Git tag,
-you will have at the output of this action the Docker tags `v1.2.3` and `latest`. But you can allow the latest tag to be
-generated only if `tag-semver` is a valid [semver](https://semver.org/) or if Git tag matches a regular expression
-with the [`tag-match` input](#tag-match-examples). Can be disabled if `tag-latest` is `false`.
+Latest Docker tag will be generated by default on `push tag` event. If for example you push the `v1.2.3` Git tag, you
+will have at the output of this action the Docker tags `v1.2.3` and `latest`. But you can allow the latest tag to be
+generated only if `tag-semver` is a valid [semver](https://semver.org/). Can be disabled if `tag-latest` is `false`.
 
 ### Handle semver tag
 
@@ -313,16 +210,6 @@ If Git tag is a valid [semver](https://semver.org/) you can handle it to output 
 > **Pre-release (rc, beta, alpha) will only extend `{{version}}` as tag because they are updated frequently,
 > and contain many breaking changes that are (by the author's design) not yet fit for public consumption.
 
-### `tag-match` examples
-
-| Git tag                 | `tag-match`                        | `tag-match-group` | Match                | Output tags               | Output version               |
-|-------------------------|------------------------------------|-------------------|----------------------|---------------------------|------------------------------|
-| `v1.2.3`                | `\d{1,3}.\d{1,3}.\d{1,3}`          | `0`               | :white_check_mark:   | `1.2.3`, `latest`         | `1.2.3`                      |
-| `v2.0.8-beta.67`        | `v(.*)`                            | `1`               | :white_check_mark:   | `2.0.8-beta.67`, `latest` | `2.0.8-beta.67`              |
-| `v2.0.8-beta.67`        | `v(\d.\d)`                         | `1`               | :white_check_mark:   | `2.0`, `latest`           | `2.0`                        |
-| `release1`              | `\d{1,3}.\d{1,3}`                  | `0`               | :x:                  | `release1`                | `release1`                   |
-| `20200110-RC2`          | `\d+`                              | `0`               | :white_check_mark:   | `20200110`, `latest`      | `20200110`                   |
-
 ### `flavor` examples
 
 | Git tag                 | `flavor` | `main-flavor` | `tag-latest` | Output tags                                 |
@@ -334,26 +221,13 @@ If Git tag is a valid [semver](https://semver.org/) you can handle it to output 
 | `v1.2.3`                | ``       | ``            | `true`       | `1.2.3`, `latest`                           |
 | `v1.2.3`                | ``       | ``            | `false`      | `1.2.3`                                     |
 
-
-### Schedule tag
-
-`tag-schedule` is specially crafted input to support [Handlebars template](https://handlebarsjs.com/guide/) with
-the following expressions:
-
-| Expression              | Example                                   | Description                              |
-|-------------------------|-------------------------------------------|------------------------------------------|
-| `{{date 'format'}}`     | `{{date 'YYYYMMDD'}}` > `20200110`        | Render date by its [moment format](https://momentjs.com/docs/#/displaying/format/)
-
-You can find more examples in the [CI workflow](.github/workflows/ci.yml).
-
 ### Overwrite labels
 
 If some of the [OCI Image Format Specification](https://github.com/opencontainers/image-spec/blob/master/annotations.md)
 labels generated are not suitable, you can overwrite them like this:
 
 ```yaml
-      -
-        name: Docker meta
+      - name: Docker meta
         id: docker_meta
         uses: MarcelCoding/ghaction-docker-meta@v1
         with:
@@ -368,11 +242,12 @@ labels generated are not suitable, you can overwrite them like this:
 ## Keep up-to-date with GitHub Dependabot
 
 Since [Dependabot](https://docs.github.com/en/github/administering-a-repository/keeping-your-actions-up-to-date-with-github-dependabot)
-has [native GitHub Actions support](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#package-ecosystem),
-to enable it on your GitHub repo all you need to do is add the `.github/dependabot.yml` file:
+has [native GitHub Actions support](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#package-ecosystem)
+, to enable it on your GitHub repo all you need to do is add the `.github/dependabot.yml` file:
 
 ```yaml
 version: 2
+
 updates:
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
@@ -380,15 +255,3 @@ updates:
     schedule:
       interval: "daily"
 ```
-
-## Contributing
-
-Want to contribute? Awesome! The most basic way to show your support is to star :star2: the project,
-or to raise issues :speech_balloon:. If you want to open a pull request, please read the
-[contributing guidelines](.github/CONTRIBUTING.md).
-
-Thanks again for your support, it is much appreciated! :pray:
-
-## License
-
-MIT. See `LICENSE` for more details.
