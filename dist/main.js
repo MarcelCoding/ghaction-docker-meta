@@ -5606,7 +5606,7 @@ class ki {
             }
         };
         var p;
-        if (a.headers["user-agent"] = [ e.userAgent, `octokit-core.js/3.5.1 ${cp()}` ].filter(Boolean).join(" "), 
+        if (a.headers["user-agent"] = [ e.userAgent, `octokit-core.js/3.6.0 ${cp()}` ].filter(Boolean).join(" "), 
         e.baseUrl && (a.baseUrl = e.baseUrl), e.previews && (a.mediaType.previews = e.previews), 
         e.timeZone && (a.headers["time-zone"] = e.timeZone), this.request = ci.defaults(a), 
         this.graphql = (p = this.request, wi(p, {
@@ -5653,7 +5653,7 @@ class ki {
     }
 }
 
-ki.VERSION = "3.5.1", ki.plugins = [];
+ki.VERSION = "3.6.0", ki.plugins = [];
 
 var Ni = fa(Object.freeze({
     __proto__: null,
